@@ -10,7 +10,9 @@ namespace RunescapeDataServer
     {
         static void Main(string[] args)
         {
-            Clan consentus = new Clan("consentus");
+            foreach (string clan in Sql.clans()) {
+                Clan consentus = new Clan(clan);
+            }
         }
     }
 }

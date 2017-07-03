@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Data.SqlClient;
+using System.Collections.Generic;
 
 namespace Handler {
     class Sql {
@@ -12,16 +13,16 @@ namespace Handler {
                 builder.InitialCatalog = "RunescapeMinigames";
 			return builder.ConnectionString;
 		}
-		public string getSQLUsers() {
-			string stg = "";
-			try 
+        public static List<string> clans() {
+            List<string> clans = new List<string>();
+            try 
             { 
                 using (SqlConnection connection = new SqlConnection(CS()))
                 {
                     connection.Open();       
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("SELECT TOP 20 [PK], [Name], [Skill], [TotalXP],[EventXP],[Points],[Level]");
-                    sb.Append("FROM [dbo].[UserTest] ");
+                    sb.Append("SELECT [Name]");
+                    sb.Append("FROM [dbo].[Clan] ");
                     String sql = sb.ToString();
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
@@ -29,18 +30,7 @@ namespace Handler {
                         {
                             while (reader.Read())
                             {
-								StringBuilder sbUser = new StringBuilder();
-								sbUser.Append(reader["PK"] + "\t");
-								sbUser.Append(reader["Name"] + "\t");
-								sbUser.Append(reader["Skill"] + "\t");
-								sbUser.Append(reader["TotalXP"] + "\t");
-								sbUser.Append(reader["EventXP"] + "\t");
-								sbUser.Append(reader["Points"] + "\t");
-								sbUser.Append(reader["Level"] + "\n");
-								stg += sbUser.ToString();
-								// Console.WriteLine(reader[0]);
-                                // Console.WriteLine("{0} {1}", reader.GetString(0), reader.GetString(1));
-								// stg += reader.GetString(0) + " " + reader.GetString(1) + "\n";
+								clans.Add(reader["Name"].ToString());
                             }
                         }
                     }                    
@@ -50,8 +40,9 @@ namespace Handler {
             {
                 Console.WriteLine(e.ToString());
             }
-			return stg;
-		}
+            return clans;
+        }
+
         //The structure of this is because of the ID per skill!!!
 		public static void updateUser(string name, int Attack, int Defence, int Strength, int Constitution, int Ranged, int Prayer, int Magic, int Cooking, 
         int Woodcutting, int Fletching, int Fishing, int Firemaking, int Crafting, int Smithing, int Mining, int Herblore, int Agility, int Thieving, int Slayer, 
