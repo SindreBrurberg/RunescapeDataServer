@@ -24,7 +24,7 @@ namespace Collector {
                 if (i % 4 == 0) {
                     string username = items[i].Replace("?", " ");
                     if (!usernames.Contains(username))
-                        this.users.Add(new User(username));
+                        this.users.Add(new User(username, name));
                 }
             }
             foreach (User user in users) {
