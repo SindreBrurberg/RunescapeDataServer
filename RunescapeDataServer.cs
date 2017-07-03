@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Text;
+using System.Threading.Tasks;
+using Handler;
+using Collector;
 
 namespace RunescapeDataServer
 {
@@ -6,8 +10,12 @@ namespace RunescapeDataServer
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-            Console.ReadLine();
+            Clan consentus = new Clan("consentus");
+            foreach (User user in consentus.users) {
+                Console.WriteLine(user.name);
+            }
+            consentus.users[3].update();
+            consentus.users[2].update();
         }
     }
 }
