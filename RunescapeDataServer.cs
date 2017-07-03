@@ -11,9 +11,6 @@ namespace RunescapeDataServer
         static void Main(string[] args)
         {
             Clan consentus = new Clan("consentus");
-            foreach (User user in consentus.users) {
-                Console.WriteLine(user.name);
-            }
         }
     }
 }
