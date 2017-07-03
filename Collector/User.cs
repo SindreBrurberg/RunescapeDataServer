@@ -5,6 +5,7 @@ namespace Collector {
     class User {
         public string name {get;}
         public int[] skills {get;}
+        public long overall {get; private set;}
         public bool UserInfoFound {get; private set;}
         private int trie = 0;
         public User(string name) {
@@ -24,6 +25,7 @@ namespace Collector {
                     if (UserInfo.Contains("error")) {
                         Console.WriteLine("User info errored out");
                         if (trie == 3) {
+                            Console.WriteLine("User info errored out, moving to next user");
                             UserInfoFound = false;
                             break;
                         }
@@ -31,10 +33,15 @@ namespace Collector {
                         int i = -1;
                         foreach (string info in UserInfo.Split(new string[]{" ", "\r", "\n", "\r\n", Environment.NewLine}
                                                         , System.StringSplitOptions.RemoveEmptyEntries)) {
-                            if (i > -1 && i <= 27) {
+                            if (i <= 27) {           
                                 var skill = info.Split(',');
-                                if (Int32.Parse(skill[0]) != -1)
-                                    skills[i] = Int32.Parse(skill[2]);
+                                if (Int32.Parse(skill[0]) != -1) {    
+                                    if (i > -1) {
+                                        skills[i] = Int32.Parse(skill[2]);
+                                    } else {
+                                        overall = Int64.Parse(skill[2]);
+                                    }
+                                }
                             }
                             i++;
                         }
@@ -45,6 +52,7 @@ namespace Collector {
                         short id = Int16.Parse(info.Substring(info.IndexOf("id") + 4));
                         int xp = Int32.Parse(info.Substring(info.IndexOf("xp") + 4).Split(',')[0]);
                         skills[id] = xp;
+                        overall += xp;
                     }
                     UserInfoFound = true;
                 }

@@ -12,10 +12,7 @@ namespace RunescapeDataServer
         {
             Clan consentus = new Clan("consentus");
             foreach (User user in consentus.users) {
-                Console.WriteLine(user.name);      
-                foreach (int skill in user.skills) {
-                    Console.WriteLine(skill);
-                }
+                Console.WriteLine(user.name);
             }
         }
     }
