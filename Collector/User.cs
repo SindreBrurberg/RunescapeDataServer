@@ -5,7 +5,7 @@ namespace Collector {
     class User {
         public string name {get;}
         public int[] skills {get;}
-        public long overall {get; private set;}
+        public long overallXP {get; private set;}
         public bool UserInfoFound {get; private set;}
         private int trie = 0;
         public User(string name) {
@@ -39,7 +39,7 @@ namespace Collector {
                                     if (i > -1) {
                                         skills[i] = Int32.Parse(skill[2]);
                                     } else {
-                                        overall = Int64.Parse(skill[2]);
+                                        overallXP = Int64.Parse(skill[2]);
                                     }
                                 }
                             }
@@ -52,7 +52,7 @@ namespace Collector {
                         short id = Int16.Parse(info.Substring(info.IndexOf("id") + 4));
                         int xp = Int32.Parse(info.Substring(info.IndexOf("xp") + 4).Split(',')[0]);
                         skills[id] = xp;
-                        overall += xp;
+                        overallXP += xp;
                     }
                     UserInfoFound = true;
                 }

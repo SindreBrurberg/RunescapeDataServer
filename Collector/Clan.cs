@@ -6,14 +6,14 @@ namespace Collector {
     class Clan {
         public List<User> users {get;}
         public string name {get;}
-        public int xp {get;}
-        public int rank {get;}
+        public long xp {get; private set;}
         public Clan(string name) {
             this.name = name;
             this.users = new List<User>();
             update();
         }
         public void update() {
+            xp = 0;
             string ClanUsers = Web.MakeAsyncRequest("http://services.runescape.com/m=clan-hiscores/members_lite.ws?clanName=" + name, "text/csv");
             string[] items = ClanUsers.Split(new string[]{",", "\r", "\n", "\r\n", Environment.NewLine}, System.StringSplitOptions.RemoveEmptyEntries);
             var usernames = new List<string>();
@@ -26,6 +26,9 @@ namespace Collector {
                     if (!usernames.Contains(username))
                         this.users.Add(new User(username));
                 }
+            }
+            foreach (User user in users) {
+                xp += user.overallXP;
             }
         }
     }  
