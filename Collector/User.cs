@@ -19,7 +19,6 @@ namespace Collector {
         public void update() {
             while (trie <= 3 && !UserInfoFound) {
                 trie++;
-                Console.WriteLine(name);
                 string UserInfo = Web.MakeAsyncRequest("https://apps.runescape.com/runemetrics/profile/profile?user=" + name + "&activities=0", "text/csv");
                 if (UserInfo.Contains("error") || name == "Charms") { //Remember to remove the or case for charms
                     Console.WriteLine("User info errored out");
