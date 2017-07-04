@@ -7,11 +7,11 @@ namespace Handler {
     class Sql {
         public static string Username {private get; set;}
         public static string Password {private get; set;}
-        public static string Database {private get; set;}
+        public static string DataSource {private get; set;}
         public static string Catalog {private get; set;}
         private static string CS() {
 			SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-                builder.DataSource = Database; 
+                builder.DataSource = DataSource; 
                 builder.UserID = Username;            
                 builder.Password = Password;     
                 builder.InitialCatalog = Catalog;

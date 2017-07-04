@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -17,7 +18,8 @@ namespace RunescapeDataServer
             Console.ReadLine();
         }
         private static void config() {
-            Sql.Database = "RunescapeMinigames.database.windows.net";
+            Config database = new Config();
+            Sql.DataSource = "RunescapeMinigames.database.windows.net";
             Sql.Username = "Dethsanius";
             Sql.Password = "Pass!000";
             Sql.Catalog = "RunescapeMinigames";
