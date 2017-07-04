@@ -13,7 +13,6 @@ namespace Collector {
             this.name = name;
             this.clan = clan;
             skills = new int[27];
-            update();
         }
 
         public void update() {

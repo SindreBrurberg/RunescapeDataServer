@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Handler;
 using Collector;
 
@@ -8,9 +9,22 @@ namespace RunescapeDataServer
 {
     class Program
     {
+        private static List<string> clans;
         static void Main(string[] args)
         {
-            foreach (string clan in Sql.clans()) {
+            config();
+            uppdateLoop();
+            Console.ReadLine();
+        }
+        private static void config() {
+            Sql.Database = "RunescapeMinigames.database.windows.net";
+            Sql.Username = "Dethsanius";
+            Sql.Password = "Pass!000";
+            Sql.Catalog = "RunescapeMinigames";
+            clans = Sql.clans();
+        }
+        private static void uppdateLoop() {
+            foreach (string clan in clans) {
                 Clan consentus = new Clan(clan);
             }
         }

@@ -28,6 +28,7 @@ namespace Collector {
                 }
             }
             foreach (User user in users) {
+                user.update();
                 xp += user.overallXP;
             }
         }
