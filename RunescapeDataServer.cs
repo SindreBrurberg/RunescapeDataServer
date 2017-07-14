@@ -14,6 +14,9 @@ namespace RunescapeDataServer
         static void Main(string[] args)
         {
             config();
+            //uppdateLoop(null);
+            Sql.updateUserTime("FatMine");
+            Console.ReadLine();
             var testTimer = new Timer(uppdateLoop, null, MillisecondsToNextHalfHouer(), 30*60*1000);
             Console.ReadLine();
         }
