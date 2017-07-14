@@ -50,7 +50,7 @@ namespace Handler {
         //The structure of this is because of the ID per skill!!!
 		public static void updateUser(string name, int Attack, int Defence, int Strength, int Constitution, int Ranged, int Prayer, int Magic, int Cooking, 
         int Woodcutting, int Fletching, int Fishing, int Firemaking, int Crafting, int Smithing, int Mining, int Herblore, int Agility, int Thieving, int Slayer, 
-        int Farming, int Runecrafting, int Construction, int Hunter, int Summoning, int Dungeoneering, int Divination, int Invention, long Overall, string Clan) {
+        int Farming, int Runecrafting, int Construction, int Hunter, int Summoning, int Dungeoneering, int Divination, int Invention, long Overall, string Clan, DateTime SkillTime) {
             int ClanID = 0;
 			try 
             { 
@@ -87,15 +87,15 @@ namespace Handler {
                         sb.Append("[Smithing] = @Smithing, [Fishing] = @Fishing, [Cooking] = @Cooking, [Firemaking] = @Firemaking, [Woodcutting] = @Woodcutting, ");
                         sb.Append("[Runecrafting] = @Runecrafting, [Agility] = @Agility, [Herblore] = @Herblore, [Thieving] = @Thieving, [Fletching] = @Fletching, ");
                         sb.Append("[Slayer] = @Slayer, [Farming] = @Farming, [Construction] = @Construction, [Hunter] = @Hunter, [Summoning] = @Summoning, ");
-                        sb.Append("[Divination] = @Divination, [Invention] = @Invention, [Overall] = @Overall, [ClanID] = @ClanID ");
+                        sb.Append("[Divination] = @Divination, [Invention] = @Invention, [Overall] = @Overall, [ClanID] = @ClanID, [SkillTime] = @SkillTime ");
                         sb.Append("WHERE name = @name");
                     } else {
                         sb.Append("INSERT INTO [dbo].[User] ([Name], [Attack], [Strength], [Defence], [Ranged], [Prayer], [Magic], [Constitution], [Crafting], [Mining], [Smithing], [Fishing]");
                         sb.Append(", [Cooking], [Firemaking], [Woodcutting], [Runecrafting], [Dungeoneering], [Agility], [Herblore], [Thieving], [Fletching], [Slayer], [Farming]");
-                        sb.Append(", [Construction], [Hunter], [Summoning], [Divination], [Invention], [Overall], [ClanID])");
+                        sb.Append(", [Construction], [Hunter], [Summoning], [Divination], [Invention], [Overall], [ClanID], [SkillTime])");
                         sb.Append("VALUES (@Name, @Attack, @Strength, @Defence, @Ranged, @Prayer, @Magic, @Constitution, @Crafting, @Mining, @Smithing, @Fishing, @Cooking, @Firemaking");
                         sb.Append(", @Woodcutting, @Runecrafting, @Dungeoneering, @Agility, @Herblore, @Thieving, @Fletching, @Slayer, @Farming, @Construction, @Hunter, @Summoning, @Divination");
-                        sb.Append(", @Invention, @Overall, @ClanID);"); 
+                        sb.Append(", @Invention, @Overall, @ClanID, @SkillTime);"); 
                     }
                     String sql = sb.ToString();
                     using (SqlCommand command = new SqlCommand(sql, connection))
@@ -130,8 +130,107 @@ namespace Handler {
                         command.Parameters.AddWithValue("@Invention ", Invention);
                         command.Parameters.AddWithValue("@Overall", Overall);
                         command.Parameters.AddWithValue("@ClanId", ClanID);
+                        command.Parameters.AddWithValue("@SkillTime", SkillTime);
                         command.ExecuteNonQuery();
                     }        
+                }
+            }
+            catch (SqlException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+		}
+        //The structure of this is because of the ID per skill!!!
+		public static void updateUserTime(string name) {
+			try 
+            { 
+                using (SqlConnection connectionGet = new SqlConnection(CS()))
+                {
+                    connectionGet.Open();       
+                    StringBuilder sbGet = new StringBuilder();
+                    sbGet.Append("SELECT TOP 1 * ");
+                    sbGet.Append("FROM [dbo].[User] ");
+                    sbGet.Append("WHERE Name = 'FatMine'");
+                    String sqlGet = sbGet.ToString();
+                    StringBuilder sbGetTime = new StringBuilder();
+                    sbGetTime.Append("SELECT TOP 1 * ");
+                    sbGetTime.Append("FROM [dbo].[UserTime] ");
+                    sbGetTime.Append("WHERE Username = 'FatMine'");
+                    String sqlGetTime = sbGetTime.ToString();
+                    StringBuilder sbInsert = new StringBuilder();
+                    sbInsert.Append("INSERT INTO [dbo].[UserTime] ([Username], [Attack], [Strength], [Defence], [Ranged], [Prayer], [Magic], [Constitution], [Crafting], [Mining], [Smithing], [Fishing]");
+                    sbInsert.Append(", [Cooking], [Firemaking], [Woodcutting], [Runecrafting], [Dungeoneering], [Agility], [Herblore], [Thieving], [Fletching], [Slayer], [Farming]");
+                    sbInsert.Append(", [Construction], [Hunter], [Summoning], [Divination], [Invention], [Overall], [SkillTime])");
+                    sbInsert.Append("VALUES (@Username, @Attack, @Strength, @Defence, @Ranged, @Prayer, @Magic, @Constitution, @Crafting, @Mining, @Smithing, @Fishing, @Cooking, @Firemaking");
+                    sbInsert.Append(", @Woodcutting, @Runecrafting, @Dungeoneering, @Agility, @Herblore, @Thieving, @Fletching, @Slayer, @Farming, @Construction, @Hunter, @Summoning, @Divination");
+                    sbInsert.Append(", @Invention, @Overall, @SkillTime);");
+                    String sqlInsert = sbInsert.ToString();
+                    using (SqlCommand commandGet = new SqlCommand(sqlGet, connectionGet))
+                    {
+                        Console.WriteLine(name);
+                        commandGet.Parameters.AddWithValue("@Name", name);
+                        using (SqlDataReader reader = commandGet.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Console.WriteLine("reading");
+                                using (SqlConnection connection = new SqlConnection(CS()))
+                                {
+                                    connection.Open();
+                                    Boolean isNew = false;
+                                    using (SqlCommand commandGetTime = new SqlCommand(sqlGetTime, connection))
+                                    {
+                                        commandGetTime.Parameters.AddWithValue("@Username", name);
+                                        using (SqlDataReader readerTime = commandGetTime.ExecuteReader())
+                                        {
+                                            while (reader.Read())
+                                            {
+                                                if (reader["SkillTime"] != readerTime["SkillTime"])
+                                                    isNew = true;
+                                            }
+                                        }
+                                    }
+                                    if (isNew) {
+                                        Console.WriteLine("New Time");
+                                        using (SqlCommand commandInsert = new SqlCommand(sqlInsert, connection))
+                                        {
+                                            commandInsert.Parameters.AddWithValue("@Username", reader["Name"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Attack", reader["Attack"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Strength", reader["Strength"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Defence", reader["Defence"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Ranged", reader["Ranged"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Prayer", reader["Prayer"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Magic", reader["Magic"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Constitution", reader["Constitution"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Crafting", reader["Crafting"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Mining", reader["Mining"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Smithing", reader["Smithing"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Fishing", reader["Fishing"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Cooking", reader["Cooking"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Firemaking", reader["Firemaking"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Woodcutting", reader["Woodcutting"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Runecrafting", reader["Runecrafting"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Dungeoneering", reader["Dungeoneering"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Agility", reader["Agility"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Herblore", reader["Herblore"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Thieving", reader["Thieving"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Fletching", reader["Fletching"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Slayer", reader["Slayer"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Farming", reader["Farming"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Construction", reader["Construction"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Hunter", reader["Hunter"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Summoning", reader["Summoning"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Divination", reader["Divination"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Invention ", reader["Invention"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@Overall", reader["Overall"].ToString());
+                                            commandInsert.Parameters.AddWithValue("@SkillTime", reader["SkillTime"].ToString());
+                                            commandInsert.ExecuteNonQuery();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             catch (SqlException e)
