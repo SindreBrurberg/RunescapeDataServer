@@ -4,7 +4,7 @@ using Handler;
 namespace Collector {
     class User {
         public string name {get;}
-        private string clan;
+        public string clan {get;}
         public DateTime skillTime {get;}
         public int[] skills {get;}
         public long overallXP {get; private set;}
@@ -77,9 +77,7 @@ namespace Collector {
             }
         }
         private void updateSql() {
-            Sql.updateUser(name, skills[0], skills[1], skills[2], skills[3], skills[4], skills[5], skills[6], skills[7], skills[8]
-                    , skills[9], skills[10], skills[11], skills[12], skills[13], skills[14], skills[15], skills[16], skills[17], skills[18]
-                    , skills[19], skills[20], skills[21], skills[22], skills[23], skills[24], skills[25], skills[26], overallXP, clan, skillTime);
+            Sql.updateUser(this);
         }
         private string[] UserSkillsInfo(string UserInfo, string start, string end, string[] sepatator) {
             return UserInfo.Substring(UserInfo.IndexOf(start) + start.Length)
