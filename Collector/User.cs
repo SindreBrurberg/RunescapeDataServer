@@ -27,7 +27,6 @@ namespace Collector {
             Console.WriteLine("Uppdating user: {0}", name);
             while (trie <= 3 && !UserInfoFound) {
                 trie++;
-                Console.WriteLine("https://apps.runescape.com/runemetrics/profile/profile?user=" + name + "&activities=0");
                 string UserInfo = Web.MakeAsyncRequest("https://apps.runescape.com/runemetrics/profile/profile?user=" + name + "&activities=0", "text/csv");
                 if (UserInfo.Contains("error") || name == "Charms") { //Remember to remove the or case for charms
                     Console.WriteLine("User info method one errored out, using method two");
@@ -52,7 +51,6 @@ namespace Collector {
                                 var skill = info.Split(',');
                                 if (Int32.Parse(skill[0]) != -1) {    
                                     if (i > -1) {
-                                        foreach (var s in skill) {Console.WriteLine(s);}
                                         skills[i] = Int32.Parse(skill[2]);
                                     } else {
                                         overallXP = Int64.Parse(skill[2]);

@@ -45,7 +45,6 @@ namespace Handler {
                                 break;
                         }
                     }
-                    Console.WriteLine(line);
                 }
             }
         }
