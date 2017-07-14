@@ -78,19 +78,50 @@ namespace Handler {
             sb.Append(", @Invention, @Overall, @SkillTime);");
             return sb.ToString();
         }
+        private static string getUserSQL() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT TOP 1 * ");
+            sb.Append("FROM [dbo].[User] ");
+            sb.Append("WHERE Name = @Name");
+            return sb.ToString();
+        }
+        private static string getUserTimeNewestSQL() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT TOP 1 * ");
+            sb.Append("FROM [dbo].[UserTime] ");
+            sb.Append("WHERE Username = @Username ");
+            sb.Append("ORDER by id DESC");
+            return sb.ToString();
+        }
+        private static string getClanIDFromClanNameSQL() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT ID ");
+            sb.Append("FROM [dbo].[Clan] ");
+            sb.Append("where name=@Name");
+            return sb.ToString();
+        }
 		public static void updateUser(User user) {
+            if (user.name.Equals("FatMine")) {
+                Console.WriteLine(
+                @"CRISES
+                USER IS FATMINE
+                OMG!!
+                READ THIS
+                CRISIS
+                OMG!!
+                !!!
+                !!!
+                !!!
+                !!!");
+            }
             int ClanID = 0;
 			try 
             { 
                 using (SqlConnection connection = new SqlConnection(CS()))
                 {
                     connection.Open(); 
-                    StringBuilder sbget = new StringBuilder();
-                    sbget.Append("SELECT ID ");
-                    sbget.Append("FROM [dbo].[Clan] ");
-                    sbget.Append("where name=@Name");
-                    String sqlGet = sbget.ToString();
-                    using (SqlCommand command = new SqlCommand(sqlGet, connection))
+                    
+                    using (SqlCommand command = new SqlCommand(getClanIDFromClanNameSQL(), connection))
                     {
                         command.Parameters.AddWithValue("@Name", user.clan);
                         using (SqlDataReader reader = command.ExecuteReader())
@@ -104,53 +135,67 @@ namespace Handler {
                     if (ClanID == 0) {
                         Console.WriteLine("Invalid Clan");
                         return;
-                    }     
+                    }
                     SqlCommand cmdCount = new SqlCommand("SELECT count(*) from [dbo].[User] WHERE name = @Name", connection);
                     cmdCount.Parameters.AddWithValue("@Name", user.name);
                     int count = (int)cmdCount.ExecuteScalar();
                     String sql;
+                    Boolean isChanged = true;
                     if (count > 0) {
                         insertNewUserTimeFromUser(user.name);
                         sql = updateUserSQL();
+                        using (SqlCommand command = new SqlCommand(getUserSQL(), connection)){
+                            command.Parameters.AddWithValue("@Name", user.name);
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read()){
+                                    if (reader["Overall"].ToString().Equals(user.overallXP.ToString())) 
+                                        isChanged = false;
+                                }
+                            }
+                        }
                     } else {
                         sql = insertUserSQL();
                     }
-                    using (SqlCommand command = new SqlCommand(sql, connection))
-                    {
-                        // The structure of this is because of the ID per skill!!!
-                        command.Parameters.AddWithValue("@Name", user.name);
-                        command.Parameters.AddWithValue("@Attack", user.skills[0]);
-                        command.Parameters.AddWithValue("@Defence", user.skills[1]);
-                        command.Parameters.AddWithValue("@Strength", user.skills[2]);
-                        command.Parameters.AddWithValue("@Constitution", user.skills[3]);
-                        command.Parameters.AddWithValue("@Ranged", user.skills[4]);
-                        command.Parameters.AddWithValue("@Prayer", user.skills[5]);
-                        command.Parameters.AddWithValue("@Magic", user.skills[6]);
-                        command.Parameters.AddWithValue("@Cooking", user.skills[7]);
-                        command.Parameters.AddWithValue("@Woodcutting", user.skills[8]);
-                        command.Parameters.AddWithValue("@Fletching", user.skills[9]);
-                        command.Parameters.AddWithValue("@Fishing", user.skills[10]);
-                        command.Parameters.AddWithValue("@Firemaking", user.skills[11]);
-                        command.Parameters.AddWithValue("@Crafting", user.skills[12]);
-                        command.Parameters.AddWithValue("@Smithing", user.skills[13]);
-                        command.Parameters.AddWithValue("@Mining", user.skills[14]);
-                        command.Parameters.AddWithValue("@Herblore", user.skills[15]);
-                        command.Parameters.AddWithValue("@Agility", user.skills[16]);
-                        command.Parameters.AddWithValue("@Thieving", user.skills[17]);
-                        command.Parameters.AddWithValue("@Slayer", user.skills[18]);
-                        command.Parameters.AddWithValue("@Farming", user.skills[19]);
-                        command.Parameters.AddWithValue("@Runecrafting", user.skills[20]);
-                        command.Parameters.AddWithValue("@Construction", user.skills[21]);
-                        command.Parameters.AddWithValue("@Hunter", user.skills[22]);
-                        command.Parameters.AddWithValue("@Summoning", user.skills[23]);
-                        command.Parameters.AddWithValue("@Dungeoneering", user.skills[24]);
-                        command.Parameters.AddWithValue("@Divination", user.skills[25]);
-                        command.Parameters.AddWithValue("@Invention ", user.skills[26]);
-                        command.Parameters.AddWithValue("@Overall", user.overallXP);
-                        command.Parameters.AddWithValue("@ClanId", ClanID);
-                        command.Parameters.AddWithValue("@SkillTime", user.skillTime);
-                        command.ExecuteNonQuery();
-                    }        
+                    if (isChanged) {
+                        Console.WriteLine("{0} is updated or new, updating the database", user.name);
+                        using (SqlCommand command = new SqlCommand(sql, connection))
+                        {
+                            // The structure of this is because of the ID per skill!!!
+                            command.Parameters.AddWithValue("@Name", user.name);
+                            command.Parameters.AddWithValue("@Attack", user.skills[0]);
+                            command.Parameters.AddWithValue("@Defence", user.skills[1]);
+                            command.Parameters.AddWithValue("@Strength", user.skills[2]);
+                            command.Parameters.AddWithValue("@Constitution", user.skills[3]);
+                            command.Parameters.AddWithValue("@Ranged", user.skills[4]);
+                            command.Parameters.AddWithValue("@Prayer", user.skills[5]);
+                            command.Parameters.AddWithValue("@Magic", user.skills[6]);
+                            command.Parameters.AddWithValue("@Cooking", user.skills[7]);
+                            command.Parameters.AddWithValue("@Woodcutting", user.skills[8]);
+                            command.Parameters.AddWithValue("@Fletching", user.skills[9]);
+                            command.Parameters.AddWithValue("@Fishing", user.skills[10]);
+                            command.Parameters.AddWithValue("@Firemaking", user.skills[11]);
+                            command.Parameters.AddWithValue("@Crafting", user.skills[12]);
+                            command.Parameters.AddWithValue("@Smithing", user.skills[13]);
+                            command.Parameters.AddWithValue("@Mining", user.skills[14]);
+                            command.Parameters.AddWithValue("@Herblore", user.skills[15]);
+                            command.Parameters.AddWithValue("@Agility", user.skills[16]);
+                            command.Parameters.AddWithValue("@Thieving", user.skills[17]);
+                            command.Parameters.AddWithValue("@Slayer", user.skills[18]);
+                            command.Parameters.AddWithValue("@Farming", user.skills[19]);
+                            command.Parameters.AddWithValue("@Runecrafting", user.skills[20]);
+                            command.Parameters.AddWithValue("@Construction", user.skills[21]);
+                            command.Parameters.AddWithValue("@Hunter", user.skills[22]);
+                            command.Parameters.AddWithValue("@Summoning", user.skills[23]);
+                            command.Parameters.AddWithValue("@Dungeoneering", user.skills[24]);
+                            command.Parameters.AddWithValue("@Divination", user.skills[25]);
+                            command.Parameters.AddWithValue("@Invention ", user.skills[26]);
+                            command.Parameters.AddWithValue("@Overall", user.overallXP);
+                            command.Parameters.AddWithValue("@ClanId", ClanID);
+                            command.Parameters.AddWithValue("@SkillTime", user.skillTime);
+                            command.ExecuteNonQuery();
+                        }     
+                    }   
                 }
             }
             catch (SqlException e)
@@ -164,18 +209,7 @@ namespace Handler {
                 using (SqlConnection connectionGet = new SqlConnection(CS()))
                 {
                     connectionGet.Open();       
-                    StringBuilder sbGet = new StringBuilder();
-                    sbGet.Append("SELECT TOP 1 * ");
-                    sbGet.Append("FROM [dbo].[User] ");
-                    sbGet.Append("WHERE Name = @Name");
-                    String sqlGet = sbGet.ToString();
-                    StringBuilder sbGetTime = new StringBuilder();
-                    sbGetTime.Append("SELECT TOP 1 * ");
-                    sbGetTime.Append("FROM [dbo].[UserTime] ");
-                    sbGetTime.Append("WHERE Username = @Username ");
-                    sbGetTime.Append("ORDER by id DESC");
-                    String sqlGetTime = sbGetTime.ToString();
-                    using (SqlCommand commandGet = new SqlCommand(sqlGet, connectionGet))
+                    using (SqlCommand commandGet = new SqlCommand(getUserSQL(), connectionGet))
                     {
                         commandGet.Parameters.AddWithValue("@Name", name);
                         using (SqlDataReader reader = commandGet.ExecuteReader())
@@ -186,7 +220,7 @@ namespace Handler {
                                 {
                                     connection.Open();
                                     Boolean isNew = false;
-                                    using (SqlCommand commandGetTime = new SqlCommand(sqlGetTime, connection))
+                                    using (SqlCommand commandGetTime = new SqlCommand(getUserTimeNewestSQL(), connection))
                                     {
                                         commandGetTime.Parameters.AddWithValue("@Username", name);
                                         using (SqlDataReader readerTime = commandGetTime.ExecuteReader())
