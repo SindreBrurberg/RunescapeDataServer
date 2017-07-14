@@ -46,8 +46,39 @@ namespace Handler {
             }
             return clans;
         }
-
-        //The structure of this is because of the ID per skill!!!
+        private static string updateUserSQL() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("UPDATE [dbo].[User] SET  [Attack] = @Attack, [Strength] = @Strength, [Defence] = @Defence, [Ranged] = @Ranged, ");
+            sb.Append("[Prayer] = @Prayer, [Magic] = @Magic, [Constitution] = @Constitution, [Crafting] = @Crafting, [Mining] = @Mining, ");
+            sb.Append("[Smithing] = @Smithing, [Fishing] = @Fishing, [Cooking] = @Cooking, [Firemaking] = @Firemaking, [Woodcutting] = @Woodcutting, ");
+            sb.Append("[Runecrafting] = @Runecrafting, [Agility] = @Agility, [Herblore] = @Herblore, [Thieving] = @Thieving, [Fletching] = @Fletching, ");
+            sb.Append("[Slayer] = @Slayer, [Farming] = @Farming, [Construction] = @Construction, [Hunter] = @Hunter, [Summoning] = @Summoning, ");
+            sb.Append("[Divination] = @Divination, [Invention] = @Invention, [Overall] = @Overall, [ClanID] = @ClanID, [SkillTime] = @SkillTime ");
+            sb.Append("WHERE name = @name");
+            return sb.ToString();
+        }
+        private static string insertUserSQL() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("INSERT INTO [dbo].[User] ([Name], [Attack], [Strength], [Defence], [Ranged], [Prayer], [Magic], [Constitution], [Crafting], [Mining], [Smithing], [Fishing]");
+            sb.Append(", [Cooking], [Firemaking], [Woodcutting], [Runecrafting], [Dungeoneering], [Agility], [Herblore], [Thieving], [Fletching], [Slayer], [Farming]");
+            sb.Append(", [Construction], [Hunter], [Summoning], [Divination], [Invention], [Overall], [ClanID], [SkillTime])");
+            sb.Append("VALUES (@Name, @Attack, @Strength, @Defence, @Ranged, @Prayer, @Magic, @Constitution, @Crafting, @Mining, @Smithing, @Fishing, @Cooking, @Firemaking");
+            sb.Append(", @Woodcutting, @Runecrafting, @Dungeoneering, @Agility, @Herblore, @Thieving, @Fletching, @Slayer, @Farming, @Construction, @Hunter, @Summoning, @Divination");
+            sb.Append(", @Invention, @Overall, @ClanID, @SkillTime);");
+            return sb.ToString();
+        }
+        private static string insertUserTimeSQL() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("INSERT INTO [dbo].[UserTime] ([Username], [Attack], [Strength], [Defence], [Ranged], [Prayer], [Magic], [Constitution], [Crafting], [Mining], [Smithing], [Fishing]");
+            sb.Append(", [Cooking], [Firemaking], [Woodcutting], [Runecrafting], [Dungeoneering], [Agility], [Herblore], [Thieving], [Fletching], [Slayer], [Farming]");
+            sb.Append(", [Construction], [Hunter], [Summoning], [Divination], [Invention], [Overall], [SkillTime])");
+            sb.Append("VALUES (@Username, @Attack, @Strength, @Defence, @Ranged, @Prayer, @Magic, @Constitution, @Crafting, @Mining, @Smithing, @Fishing, @Cooking, @Firemaking");
+            sb.Append(", @Woodcutting, @Runecrafting, @Dungeoneering, @Agility, @Herblore, @Thieving, @Fletching, @Slayer, @Farming, @Construction, @Hunter, @Summoning, @Divination");
+            sb.Append(", @Invention, @Overall, @SkillTime);");
+            return sb.ToString();
+        }
+        // The structure of this is because of the ID per skill!!!
+        // look at the possibilities to insert the user object here insted of individual values.
 		public static void updateUser(string name, int Attack, int Defence, int Strength, int Constitution, int Ranged, int Prayer, int Magic, int Cooking, 
         int Woodcutting, int Fletching, int Fishing, int Firemaking, int Crafting, int Smithing, int Mining, int Herblore, int Agility, int Thieving, int Slayer, 
         int Farming, int Runecrafting, int Construction, int Hunter, int Summoning, int Dungeoneering, int Divination, int Invention, long Overall, string Clan, DateTime SkillTime) {
@@ -80,24 +111,13 @@ namespace Handler {
                     SqlCommand cmdCount = new SqlCommand("SELECT count(*) from [dbo].[User] WHERE name = @Name", connection);
                     cmdCount.Parameters.AddWithValue("@Name", name);
                     int count = (int)cmdCount.ExecuteScalar();
-                    StringBuilder sb = new StringBuilder();
+                    String sql;
                     if (count > 0) {
-                        sb.Append("UPDATE [dbo].[User] SET  [Attack] = @Attack, [Strength] = @Strength, [Defence] = @Defence, [Ranged] = @Ranged, ");
-                        sb.Append("[Prayer] = @Prayer, [Magic] = @Magic, [Constitution] = @Constitution, [Crafting] = @Crafting, [Mining] = @Mining, ");
-                        sb.Append("[Smithing] = @Smithing, [Fishing] = @Fishing, [Cooking] = @Cooking, [Firemaking] = @Firemaking, [Woodcutting] = @Woodcutting, ");
-                        sb.Append("[Runecrafting] = @Runecrafting, [Agility] = @Agility, [Herblore] = @Herblore, [Thieving] = @Thieving, [Fletching] = @Fletching, ");
-                        sb.Append("[Slayer] = @Slayer, [Farming] = @Farming, [Construction] = @Construction, [Hunter] = @Hunter, [Summoning] = @Summoning, ");
-                        sb.Append("[Divination] = @Divination, [Invention] = @Invention, [Overall] = @Overall, [ClanID] = @ClanID, [SkillTime] = @SkillTime ");
-                        sb.Append("WHERE name = @name");
+                        insertNewUserTimeFromUser(name);
+                        sql = updateUserSQL();
                     } else {
-                        sb.Append("INSERT INTO [dbo].[User] ([Name], [Attack], [Strength], [Defence], [Ranged], [Prayer], [Magic], [Constitution], [Crafting], [Mining], [Smithing], [Fishing]");
-                        sb.Append(", [Cooking], [Firemaking], [Woodcutting], [Runecrafting], [Dungeoneering], [Agility], [Herblore], [Thieving], [Fletching], [Slayer], [Farming]");
-                        sb.Append(", [Construction], [Hunter], [Summoning], [Divination], [Invention], [Overall], [ClanID], [SkillTime])");
-                        sb.Append("VALUES (@Name, @Attack, @Strength, @Defence, @Ranged, @Prayer, @Magic, @Constitution, @Crafting, @Mining, @Smithing, @Fishing, @Cooking, @Firemaking");
-                        sb.Append(", @Woodcutting, @Runecrafting, @Dungeoneering, @Agility, @Herblore, @Thieving, @Fletching, @Slayer, @Farming, @Construction, @Hunter, @Summoning, @Divination");
-                        sb.Append(", @Invention, @Overall, @ClanID, @SkillTime);"); 
+                        sql = insertUserSQL();
                     }
-                    String sql = sb.ToString();
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
                         command.Parameters.AddWithValue("@Name", name);
@@ -140,8 +160,7 @@ namespace Handler {
                 Console.WriteLine(e.ToString());
             }
 		}
-        //The structure of this is because of the ID per skill!!!
-		public static void updateUserTime(string name) {
+		public static void insertNewUserTimeFromUser(string name) {
 			try 
             { 
                 using (SqlConnection connectionGet = new SqlConnection(CS()))
@@ -157,14 +176,6 @@ namespace Handler {
                     sbGetTime.Append("FROM [dbo].[UserTime] ");
                     sbGetTime.Append("WHERE Username = 'FatMine'");
                     String sqlGetTime = sbGetTime.ToString();
-                    StringBuilder sbInsert = new StringBuilder();
-                    sbInsert.Append("INSERT INTO [dbo].[UserTime] ([Username], [Attack], [Strength], [Defence], [Ranged], [Prayer], [Magic], [Constitution], [Crafting], [Mining], [Smithing], [Fishing]");
-                    sbInsert.Append(", [Cooking], [Firemaking], [Woodcutting], [Runecrafting], [Dungeoneering], [Agility], [Herblore], [Thieving], [Fletching], [Slayer], [Farming]");
-                    sbInsert.Append(", [Construction], [Hunter], [Summoning], [Divination], [Invention], [Overall], [SkillTime])");
-                    sbInsert.Append("VALUES (@Username, @Attack, @Strength, @Defence, @Ranged, @Prayer, @Magic, @Constitution, @Crafting, @Mining, @Smithing, @Fishing, @Cooking, @Firemaking");
-                    sbInsert.Append(", @Woodcutting, @Runecrafting, @Dungeoneering, @Agility, @Herblore, @Thieving, @Fletching, @Slayer, @Farming, @Construction, @Hunter, @Summoning, @Divination");
-                    sbInsert.Append(", @Invention, @Overall, @SkillTime);");
-                    String sqlInsert = sbInsert.ToString();
                     using (SqlCommand commandGet = new SqlCommand(sqlGet, connectionGet))
                     {
                         Console.WriteLine(name);
@@ -192,7 +203,7 @@ namespace Handler {
                                     }
                                     if (isNew) {
                                         Console.WriteLine("New Time");
-                                        using (SqlCommand commandInsert = new SqlCommand(sqlInsert, connection))
+                                        using (SqlCommand commandInsert = new SqlCommand(insertUserTimeSQL(), connection))
                                         {
                                             commandInsert.Parameters.AddWithValue("@Username", reader["Name"].ToString());
                                             commandInsert.Parameters.AddWithValue("@Attack", reader["Attack"].ToString());
