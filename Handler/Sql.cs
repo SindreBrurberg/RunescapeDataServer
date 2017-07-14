@@ -167,22 +167,21 @@ namespace Handler {
                     StringBuilder sbGet = new StringBuilder();
                     sbGet.Append("SELECT TOP 1 * ");
                     sbGet.Append("FROM [dbo].[User] ");
-                    sbGet.Append("WHERE Name = 'FatMine'");
+                    sbGet.Append("WHERE Name = @Name");
                     String sqlGet = sbGet.ToString();
                     StringBuilder sbGetTime = new StringBuilder();
                     sbGetTime.Append("SELECT TOP 1 * ");
                     sbGetTime.Append("FROM [dbo].[UserTime] ");
-                    sbGetTime.Append("WHERE Username = 'FatMine'");
+                    sbGetTime.Append("WHERE Username = @Username ");
+                    sbGetTime.Append("ORDER by id DESC");
                     String sqlGetTime = sbGetTime.ToString();
                     using (SqlCommand commandGet = new SqlCommand(sqlGet, connectionGet))
                     {
-                        Console.WriteLine(name);
                         commandGet.Parameters.AddWithValue("@Name", name);
                         using (SqlDataReader reader = commandGet.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                Console.WriteLine("reading");
                                 using (SqlConnection connection = new SqlConnection(CS()))
                                 {
                                     connection.Open();
@@ -192,15 +191,19 @@ namespace Handler {
                                         commandGetTime.Parameters.AddWithValue("@Username", name);
                                         using (SqlDataReader readerTime = commandGetTime.ExecuteReader())
                                         {
-                                            while (reader.Read())
+                                            Console.WriteLine("Reading information about {0} from user table", name);
+                                            Boolean reading = false;
+                                            while (readerTime.Read())
                                             {
-                                                if (reader["SkillTime"] != readerTime["SkillTime"])
+                                                reading = true;
+                                                if (!reader["SkillTime"].ToString().Equals(readerTime["SkillTime"].ToString()))
                                                     isNew = true;
                                             }
+                                            if (!reading)
+                                                isNew = true;
                                         }
                                     }
                                     if (isNew) {
-                                        Console.WriteLine("New Time");
                                         using (SqlCommand commandInsert = new SqlCommand(insertUserTimeSQL(), connection))
                                         {
                                             commandInsert.Parameters.AddWithValue("@Username", reader["Name"].ToString());
