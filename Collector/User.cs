@@ -16,10 +16,17 @@ namespace Collector {
             this.skills = new int[27];
             this.skillTime = DateTime.Now;
         }
-        public User(string name, string clan, int[] skills, DateTime skillTime) {
+        public User(string name, string clan, int[] skills, long overallXP, DateTime skillTime) {
             this.name = name;
             this.clan = clan;
             this.skills = skills;
+            this.overallXP = overallXP;
+            this.skillTime = skillTime;
+        }
+        public User(string name, int[] skills, long overallXP, DateTime skillTime) {
+            this.name = name;
+            this.skills = skills;
+            this.overallXP = overallXP;
             this.skillTime = skillTime;
         }
 

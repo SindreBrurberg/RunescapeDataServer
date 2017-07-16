@@ -100,6 +100,49 @@ namespace Handler {
             sb.Append("where name=@Name");
             return sb.ToString();
         }
+        private static void runSQLQuerry(string sql, User user, int ClanID) {
+            using (SqlConnection connection = new SqlConnection(CS())) 
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    // The structure of this is because of the ID per skill!!!
+                    command.Parameters.AddWithValue(ClanID == 0 ? "@Name" : "@Username", user.name);
+                    command.Parameters.AddWithValue("@Attack", user.skills[0]);
+                    command.Parameters.AddWithValue("@Defence", user.skills[1]);
+                    command.Parameters.AddWithValue("@Strength", user.skills[2]);
+                    command.Parameters.AddWithValue("@Constitution", user.skills[3]);
+                    command.Parameters.AddWithValue("@Ranged", user.skills[4]);
+                    command.Parameters.AddWithValue("@Prayer", user.skills[5]);
+                    command.Parameters.AddWithValue("@Magic", user.skills[6]);
+                    command.Parameters.AddWithValue("@Cooking", user.skills[7]);
+                    command.Parameters.AddWithValue("@Woodcutting", user.skills[8]);
+                    command.Parameters.AddWithValue("@Fletching", user.skills[9]);
+                    command.Parameters.AddWithValue("@Fishing", user.skills[10]);
+                    command.Parameters.AddWithValue("@Firemaking", user.skills[11]);
+                    command.Parameters.AddWithValue("@Crafting", user.skills[12]);
+                    command.Parameters.AddWithValue("@Smithing", user.skills[13]);
+                    command.Parameters.AddWithValue("@Mining", user.skills[14]);
+                    command.Parameters.AddWithValue("@Herblore", user.skills[15]);
+                    command.Parameters.AddWithValue("@Agility", user.skills[16]);
+                    command.Parameters.AddWithValue("@Thieving", user.skills[17]);
+                    command.Parameters.AddWithValue("@Slayer", user.skills[18]);
+                    command.Parameters.AddWithValue("@Farming", user.skills[19]);
+                    command.Parameters.AddWithValue("@Runecrafting", user.skills[20]);
+                    command.Parameters.AddWithValue("@Construction", user.skills[21]);
+                    command.Parameters.AddWithValue("@Hunter", user.skills[22]);
+                    command.Parameters.AddWithValue("@Summoning", user.skills[23]);
+                    command.Parameters.AddWithValue("@Dungeoneering", user.skills[24]);
+                    command.Parameters.AddWithValue("@Divination", user.skills[25]);
+                    command.Parameters.AddWithValue("@Invention ", user.skills[26]);
+                    command.Parameters.AddWithValue("@Overall", user.overallXP);
+                    if (ClanID == 0)
+                        command.Parameters.AddWithValue("@ClanId", ClanID);
+                    command.Parameters.AddWithValue("@SkillTime", user.skillTime);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
 		public static void updateUser(User user) {
             if (user.name.Equals("FatMine")) {
                 Console.WriteLine(
@@ -139,63 +182,23 @@ namespace Handler {
                     SqlCommand cmdCount = new SqlCommand("SELECT count(*) from [dbo].[User] WHERE name = @Name", connection);
                     cmdCount.Parameters.AddWithValue("@Name", user.name);
                     int count = (int)cmdCount.ExecuteScalar();
-                    String sql;
-                    Boolean isChanged = true;
                     if (count > 0) {
                         insertNewUserTimeFromUser(user.name);
-                        sql = updateUserSQL();
-                        using (SqlCommand command = new SqlCommand(getUserSQL(), connection)){
-                            command.Parameters.AddWithValue("@Name", user.name);
-                            using (SqlDataReader reader = command.ExecuteReader())
+                        using (SqlCommand commandGet = new SqlCommand(getUserSQL(), connection)){
+                            commandGet.Parameters.AddWithValue("@Name", user.name);
+                            using (SqlDataReader reader = commandGet.ExecuteReader())
                             {
                                 while (reader.Read()){
-                                    if (reader["Overall"].ToString().Equals(user.overallXP.ToString())) 
-                                        isChanged = false;
+                                    if (Int64.Parse(reader["Overall"].ToString()) >= Int64.Parse(user.overallXP.ToString())) 
+                                    {
+                                        runSQLQuerry(updateUserSQL(), user, ClanID);
+                                    }     
                                 }
                             }
                         }
                     } else {
-                        sql = insertUserSQL();
+                        runSQLQuerry(insertUserSQL(), user, ClanID);
                     }
-                    if (isChanged) {
-                        Console.WriteLine("{0} is updated or new, updating the database", user.name);
-                        using (SqlCommand command = new SqlCommand(sql, connection))
-                        {
-                            // The structure of this is because of the ID per skill!!!
-                            command.Parameters.AddWithValue("@Name", user.name);
-                            command.Parameters.AddWithValue("@Attack", user.skills[0]);
-                            command.Parameters.AddWithValue("@Defence", user.skills[1]);
-                            command.Parameters.AddWithValue("@Strength", user.skills[2]);
-                            command.Parameters.AddWithValue("@Constitution", user.skills[3]);
-                            command.Parameters.AddWithValue("@Ranged", user.skills[4]);
-                            command.Parameters.AddWithValue("@Prayer", user.skills[5]);
-                            command.Parameters.AddWithValue("@Magic", user.skills[6]);
-                            command.Parameters.AddWithValue("@Cooking", user.skills[7]);
-                            command.Parameters.AddWithValue("@Woodcutting", user.skills[8]);
-                            command.Parameters.AddWithValue("@Fletching", user.skills[9]);
-                            command.Parameters.AddWithValue("@Fishing", user.skills[10]);
-                            command.Parameters.AddWithValue("@Firemaking", user.skills[11]);
-                            command.Parameters.AddWithValue("@Crafting", user.skills[12]);
-                            command.Parameters.AddWithValue("@Smithing", user.skills[13]);
-                            command.Parameters.AddWithValue("@Mining", user.skills[14]);
-                            command.Parameters.AddWithValue("@Herblore", user.skills[15]);
-                            command.Parameters.AddWithValue("@Agility", user.skills[16]);
-                            command.Parameters.AddWithValue("@Thieving", user.skills[17]);
-                            command.Parameters.AddWithValue("@Slayer", user.skills[18]);
-                            command.Parameters.AddWithValue("@Farming", user.skills[19]);
-                            command.Parameters.AddWithValue("@Runecrafting", user.skills[20]);
-                            command.Parameters.AddWithValue("@Construction", user.skills[21]);
-                            command.Parameters.AddWithValue("@Hunter", user.skills[22]);
-                            command.Parameters.AddWithValue("@Summoning", user.skills[23]);
-                            command.Parameters.AddWithValue("@Dungeoneering", user.skills[24]);
-                            command.Parameters.AddWithValue("@Divination", user.skills[25]);
-                            command.Parameters.AddWithValue("@Invention ", user.skills[26]);
-                            command.Parameters.AddWithValue("@Overall", user.overallXP);
-                            command.Parameters.AddWithValue("@ClanId", ClanID);
-                            command.Parameters.AddWithValue("@SkillTime", user.skillTime);
-                            command.ExecuteNonQuery();
-                        }     
-                    }   
                 }
             }
             catch (SqlException e)
@@ -206,75 +209,33 @@ namespace Handler {
 		public static void insertNewUserTimeFromUser(string name) {
 			try 
             { 
-                using (SqlConnection connectionGet = new SqlConnection(CS()))
+                User user = newUserFromUserTable(name);
+                using (SqlConnection connection = new SqlConnection(CS()))
                 {
-                    connectionGet.Open();       
-                    using (SqlCommand commandGet = new SqlCommand(getUserSQL(), connectionGet))
+                    connection.Open();
+                    Boolean isNew = false;
+                    using (SqlCommand commandGetTime = new SqlCommand(getUserTimeNewestSQL(), connection))
                     {
-                        commandGet.Parameters.AddWithValue("@Name", name);
-                        using (SqlDataReader reader = commandGet.ExecuteReader())
+                        commandGetTime.Parameters.AddWithValue("@Username", name);
+                        using (SqlDataReader readerTime = commandGetTime.ExecuteReader())
                         {
-                            while (reader.Read())
+                            Console.WriteLine("Reading information about {0} from user table", name);
+                            Boolean reading = false;
+                            while (readerTime.Read())
                             {
-                                using (SqlConnection connection = new SqlConnection(CS()))
-                                {
-                                    connection.Open();
-                                    Boolean isNew = false;
-                                    using (SqlCommand commandGetTime = new SqlCommand(getUserTimeNewestSQL(), connection))
-                                    {
-                                        commandGetTime.Parameters.AddWithValue("@Username", name);
-                                        using (SqlDataReader readerTime = commandGetTime.ExecuteReader())
-                                        {
-                                            Console.WriteLine("Reading information about {0} from user table", name);
-                                            Boolean reading = false;
-                                            while (readerTime.Read())
-                                            {
-                                                reading = true;
-                                                if (!reader["SkillTime"].ToString().Equals(readerTime["SkillTime"].ToString()))
-                                                    isNew = true;
-                                            }
-                                            if (!reading)
-                                                isNew = true;
-                                        }
-                                    }
-                                    if (isNew) {
-                                        using (SqlCommand commandInsert = new SqlCommand(insertUserTimeSQL(), connection))
-                                        {
-                                            commandInsert.Parameters.AddWithValue("@Username", reader["Name"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Attack", reader["Attack"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Strength", reader["Strength"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Defence", reader["Defence"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Ranged", reader["Ranged"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Prayer", reader["Prayer"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Magic", reader["Magic"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Constitution", reader["Constitution"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Crafting", reader["Crafting"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Mining", reader["Mining"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Smithing", reader["Smithing"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Fishing", reader["Fishing"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Cooking", reader["Cooking"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Firemaking", reader["Firemaking"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Woodcutting", reader["Woodcutting"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Runecrafting", reader["Runecrafting"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Dungeoneering", reader["Dungeoneering"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Agility", reader["Agility"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Herblore", reader["Herblore"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Thieving", reader["Thieving"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Fletching", reader["Fletching"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Slayer", reader["Slayer"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Farming", reader["Farming"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Construction", reader["Construction"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Hunter", reader["Hunter"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Summoning", reader["Summoning"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Divination", reader["Divination"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Invention ", reader["Invention"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@Overall", reader["Overall"].ToString());
-                                            commandInsert.Parameters.AddWithValue("@SkillTime", reader["SkillTime"].ToString());
-                                            commandInsert.ExecuteNonQuery();
-                                        }
-                                    }
-                                }
+                                reading = true;
+                                if (!user.skillTime.Equals(readerTime["SkillTime"]))
+                                    isNew = true;
                             }
+                            if (!reading)
+                                isNew = true;
+                        }
+                    }
+                    if (isNew) {
+                        runSQLQuerry(insertUserTimeSQL(), user, 0);
+                        using (SqlCommand commandInsert = new SqlCommand(insertUserTimeSQL(), connection))
+                        {
+                            commandInsert.ExecuteNonQuery();
                         }
                     }
                 }
@@ -284,5 +245,51 @@ namespace Handler {
                 Console.WriteLine(e.ToString());
             }
 		}
+        public static User newUserFromUserTable(string Username) {
+            using (SqlConnection connectionGet = new SqlConnection(CS()))
+            {
+                connectionGet.Open();       
+                using (SqlCommand commandGet = new SqlCommand(getUserSQL(), connectionGet))
+                {
+                    commandGet.Parameters.AddWithValue("@Name", Username);
+                    using (SqlDataReader reader = commandGet.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int[] skills = new int[27];
+                            skills[0] = Int32.Parse(reader["Attack"].ToString());
+                            skills[1] = Int32.Parse(reader["Strength"].ToString());
+                            skills[2] = Int32.Parse(reader["Defence"].ToString());
+                            skills[3] = Int32.Parse(reader["Ranged"].ToString());
+                            skills[4] = Int32.Parse(reader["Prayer"].ToString());
+                            skills[5] = Int32.Parse(reader["Magic"].ToString());
+                            skills[6] = Int32.Parse(reader["Constitution"].ToString());
+                            skills[7] = Int32.Parse(reader["Crafting"].ToString());
+                            skills[8] = Int32.Parse(reader["Mining"].ToString());
+                            skills[9] = Int32.Parse(reader["Smithing"].ToString());
+                            skills[10] = Int32.Parse(reader["Fishing"].ToString());
+                            skills[11] = Int32.Parse(reader["Cooking"].ToString());
+                            skills[12] = Int32.Parse(reader["Firemaking"].ToString());
+                            skills[13] = Int32.Parse(reader["Woodcutting"].ToString());
+                            skills[14] = Int32.Parse(reader["Runecrafting"].ToString());
+                            skills[15] = Int32.Parse(reader["Dungeoneering"].ToString());
+                            skills[16] = Int32.Parse(reader["Agility"].ToString());
+                            skills[17] = Int32.Parse(reader["Herblore"].ToString());
+                            skills[18] = Int32.Parse(reader["Thieving"].ToString());
+                            skills[19] = Int32.Parse(reader["Fletching"].ToString());
+                            skills[20] = Int32.Parse(reader["Slayer"].ToString());
+                            skills[21] = Int32.Parse(reader["Farming"].ToString());
+                            skills[22] = Int32.Parse(reader["Construction"].ToString());
+                            skills[23] = Int32.Parse(reader["Hunter"].ToString());
+                            skills[24] = Int32.Parse(reader["Summoning"].ToString());
+                            skills[25] = Int32.Parse(reader["Divination"].ToString());
+                            skills[26] = Int32.Parse(reader["Invention"].ToString());
+                            return new User(reader["Name"].ToString(), skills, Int64.Parse(reader["Overall"].ToString()), DateTime.Parse(reader["SkillTime"].ToString()));
+                        }
+                    }
+                }
+            }
+            return null;
+        }
     }
 }
