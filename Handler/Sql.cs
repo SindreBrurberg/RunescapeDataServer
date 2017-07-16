@@ -100,6 +100,13 @@ namespace Handler {
             sb.Append("where name=@Name");
             return sb.ToString();
         }
+        private static string getClanNameFromClanIDSQL() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT Name ");
+            sb.Append("FROM [dbo].[Clan] ");
+            sb.Append("where ID=@ID");
+            return sb.ToString();
+        }
         private static void runSQLQuerry(string sql, User user, int ClanID) {
             using (SqlConnection connection = new SqlConnection(CS())) 
             {
@@ -246,17 +253,18 @@ namespace Handler {
             }
 		}
         public static User newUserFromUserTable(string Username) {
-            using (SqlConnection connectionGet = new SqlConnection(CS()))
+            using (SqlConnection connection = new SqlConnection(CS()))
             {
-                connectionGet.Open();       
-                using (SqlCommand commandGet = new SqlCommand(getUserSQL(), connectionGet))
+                connection.Open();       
+                int[] skills = new int[27];
+                string Clan;
+                using (SqlCommand commandGet = new SqlCommand(getUserSQL(), connection))
                 {
                     commandGet.Parameters.AddWithValue("@Name", Username);
                     using (SqlDataReader reader = commandGet.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            int[] skills = new int[27];
                             skills[0] = Int32.Parse(reader["Attack"].ToString());
                             skills[1] = Int32.Parse(reader["Strength"].ToString());
                             skills[2] = Int32.Parse(reader["Defence"].ToString());
@@ -288,6 +296,17 @@ namespace Handler {
                         }
                     }
                 }
+                using (SqlCommand command = new SqlCommand(getClanIDFromClanNameSQL(), connection))
+                {
+                    command.Parameters.AddWithValue("@ID", user.clan);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ClanID = Int32.Parse(reader["Name"].ToString());
+                        }
+                    }
+                } 
             }
             return null;
         }
