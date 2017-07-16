@@ -240,10 +240,6 @@ namespace Handler {
                     }
                     if (isNew) {
                         runSQLQuerry(insertUserTimeSQL(), user, 0);
-                        using (SqlCommand commandInsert = new SqlCommand(insertUserTimeSQL(), connection))
-                        {
-                            commandInsert.ExecuteNonQuery();
-                        }
                     }
                 }
             }
