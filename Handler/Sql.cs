@@ -255,9 +255,12 @@ namespace Handler {
         public static User newUserFromUserTable(string Username) {
             using (SqlConnection connection = new SqlConnection(CS()))
             {
-                connection.Open();       
+                connection.Open();  
                 int[] skills = new int[27];
-                string Clan;
+                long overallXP = 0;
+                int ClanID = 0;
+                string Clan = "";
+                DateTime skillTime = new DateTime();
                 using (SqlCommand commandGet = new SqlCommand(getUserSQL(), connection))
                 {
                     commandGet.Parameters.AddWithValue("@Name", Username);
@@ -292,21 +295,24 @@ namespace Handler {
                             skills[24] = Int32.Parse(reader["Summoning"].ToString());
                             skills[25] = Int32.Parse(reader["Divination"].ToString());
                             skills[26] = Int32.Parse(reader["Invention"].ToString());
-                            return new User(reader["Name"].ToString(), skills, Int64.Parse(reader["Overall"].ToString()), DateTime.Parse(reader["SkillTime"].ToString()));
+                            overallXP = Int64.Parse(reader["Overall"].ToString());
+                            ClanID = Int32.Parse(reader["ClanID"].ToString());
+                            skillTime = DateTime.Parse(reader["SkillTime"].ToString());
                         }
                     }
                 }
                 using (SqlCommand command = new SqlCommand(getClanIDFromClanNameSQL(), connection))
                 {
-                    command.Parameters.AddWithValue("@ID", user.clan);
+                    command.Parameters.AddWithValue("@ID", ClanID);
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            ClanID = Int32.Parse(reader["Name"].ToString());
+                            Clan = reader["Name"].ToString();
                         }
                     }
                 } 
+                return new User(Username, skills, overallXP, skillTime);
             }
             return null;
         }
