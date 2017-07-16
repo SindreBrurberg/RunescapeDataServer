@@ -5,6 +5,7 @@ using System.Threading;
 using System.Collections.Generic;
 using Handler;
 using Collector;
+using Sql;
 
 namespace RunescapeDataServer
 {
@@ -26,9 +27,9 @@ namespace RunescapeDataServer
         private static void config() {
             ConfigFile.init();
             Console.WriteLine("Config File Loaded");
-            clans = Sql.clans();
+            clans = Sql.Object.clans();
         }
-        private static void uppdateLoop(Object stateInfo) {
+        private static void uppdateLoop(object stateInfo) {
             foreach (string clan in clans) {
                 Clan consentus = new Clan(clan);
             }

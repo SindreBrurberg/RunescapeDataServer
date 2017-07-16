@@ -1,5 +1,6 @@
 using System;
 using Handler;
+using Sql;
 
 namespace Collector {
     class User {
@@ -82,7 +83,7 @@ namespace Collector {
             }
         }
         private void updateSql() {
-            Sql.updateUser(this);
+            Command.updateUser(this);
         }
         private string[] UserSkillsInfo(string UserInfo, string start, string end, string[] sepatator) {
             return UserInfo.Substring(UserInfo.IndexOf(start) + start.Length)
