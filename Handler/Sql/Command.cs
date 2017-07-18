@@ -11,7 +11,7 @@ namespace Sql {
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
                     // The structure of this is because of the ID per skill!!!
-                    command.Parameters.AddWithValue(ClanID == 0 ? "@Name" : "@Username", user.name);
+                    command.Parameters.AddWithValue(ClanID == 0 ? "@Username" : "@Name", user.name);
                     command.Parameters.AddWithValue("@Attack", user.skills[0]);
                     command.Parameters.AddWithValue("@Defence", user.skills[1]);
                     command.Parameters.AddWithValue("@Strength", user.skills[2]);
@@ -40,7 +40,7 @@ namespace Sql {
                     command.Parameters.AddWithValue("@Divination", user.skills[25]);
                     command.Parameters.AddWithValue("@Invention ", user.skills[26]);
                     command.Parameters.AddWithValue("@Overall", user.overallXP);
-                    if (ClanID == 0)
+                    if (ClanID != 0)
                         command.Parameters.AddWithValue("@ClanId", ClanID);
                     command.Parameters.AddWithValue("@SkillTime", user.skillTime);
                     command.ExecuteNonQuery();
