@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Sql;
 
 namespace Handler {
     class ConfigFile {
@@ -34,13 +35,13 @@ namespace Handler {
                         switch (obj) {
                             case "Database":
                                 if (line.Contains("DataSource")) {
-                                    Sql.DataSource = line.Substring(line.IndexOf(":") + 1).Replace(" ", "");
+                                    Connection.DataSource = line.Substring(line.IndexOf(":") + 1).Replace(" ", "");
                                 } else if (line.Contains("Username")) {
-                                    Sql.Username = line.Substring(line.IndexOf(":") + 1).Replace(" ", "");
+                                    Connection.Username = line.Substring(line.IndexOf(":") + 1).Replace(" ", "");
                                 } else if (line.Contains("Password")) {
-                                    Sql.Password = line.Substring(line.IndexOf(":") + 1).Replace(" ", "");
+                                    Connection.Password = line.Substring(line.IndexOf(":") + 1).Replace(" ", "");
                                 } else if (line.Contains("Catalog")) {
-                                    Sql.Catalog = line.Substring(line.IndexOf(":") + 1).Replace(" ", "");
+                                    Connection.Catalog = line.Substring(line.IndexOf(":") + 1).Replace(" ", "");
                                 }
                                 break;
                         }
