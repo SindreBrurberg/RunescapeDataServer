@@ -7,7 +7,7 @@ using Handler;
 using Collector;
 using Sql;
 
-namespace RunescapeDataServer
+namespace Server
 {
     class Program
     {
