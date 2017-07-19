@@ -33,8 +33,8 @@ namespace Sql {
                     command.Parameters.AddWithValue("@Slayer", user.skills[18]);
                     command.Parameters.AddWithValue("@Farming", user.skills[19]);
                     command.Parameters.AddWithValue("@Runecrafting", user.skills[20]);
-                    command.Parameters.AddWithValue("@Construction", user.skills[21]);
-                    command.Parameters.AddWithValue("@Hunter", user.skills[22]);
+                    command.Parameters.AddWithValue("@Hunter", user.skills[21]);
+                    command.Parameters.AddWithValue("@Construction", user.skills[22]);
                     command.Parameters.AddWithValue("@Summoning", user.skills[23]);
                     command.Parameters.AddWithValue("@Dungeoneering", user.skills[24]);
                     command.Parameters.AddWithValue("@Divination", user.skills[25]);
@@ -93,7 +93,7 @@ namespace Sql {
                             using (SqlDataReader reader = commandGet.ExecuteReader())
                             {
                                 while (reader.Read()){
-                                    if (Int64.Parse(reader["Overall"].ToString()) >= Int64.Parse(user.overallXP.ToString())) 
+                                    if (Int64.Parse(reader["Overall"].ToString()) < Int64.Parse(user.overallXP.ToString())) 
                                     {
                                         runSQLQuerry(String.updateUserSQL(), user, ClanID);
                                     }     

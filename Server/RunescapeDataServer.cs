@@ -14,15 +14,14 @@ namespace Server
 {
     class Program
     {
-        private static List<string> clans;
+        //public static List<string> clans;
+        public static List<Clan> clans;
         static void Main(string[] args)
         {
-            RequestServer.run();
-
-            Console.ReadLine();
             config();
             uppdateLoop(null);
             Console.ReadLine();
+            RequestServer.run();
             var testTimer = new Timer(uppdateLoop, null, MillisecondsToNextHalfHouer(), 30*60*1000);
             Console.ReadLine();
         }
@@ -37,8 +36,8 @@ namespace Server
             clans = Sql.Object.clans();
         }
         private static void uppdateLoop(object stateInfo) {
-            foreach (string clan in clans) {
-                Clan consentus = new Clan(clan);
+            foreach (Clan clan in clans) {
+                clan.update();
             }
         }
     }

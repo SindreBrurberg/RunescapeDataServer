@@ -6,7 +6,7 @@ namespace Collector {
     class User {
         public string name {get;}
         public string clan {get;}
-        public DateTime skillTime {get;}
+        public DateTime skillTime {get; private set;}
         public int[] skills {get;}
         public long overallXP {get; private set;}
         public bool UserInfoFound {get; private set;}
@@ -36,7 +36,7 @@ namespace Collector {
             while (trie <= 3 && !UserInfoFound) {
                 trie++;
                 string UserInfo = Web.MakeAsyncRequest("https://apps.runescape.com/runemetrics/profile/profile?user=" + name + "&activities=0", "text/csv");
-                if (UserInfo.Contains("error") || name == "Charms") { //Remember to remove the or case for charms
+                if (UserInfo.Contains("error")) { //Remember to remove the or case for charms
                     Console.WriteLine("User info method one errored out, using method two");
                     try {
                         UserInfo = Web.MakeAsyncRequest("http://services.runescape.com/m=hiscore/index_lite.ws?player=" + name, "text/csv");
@@ -73,9 +73,10 @@ namespace Collector {
                 } else {
                     foreach (string info in UserSkillsInfo(UserInfo, "skillvalues\":[{", "}]", new string[]{"},{"})) {
                         short id = Int16.Parse(info.Substring(info.IndexOf("id") + 4));
-                        int xp = Int32.Parse(info.Substring(info.IndexOf("xp") + 4).Split(',')[0]);
+                        string xps = info.Substring(info.IndexOf("xp") + 4).Split(',')[0];
+                        int xp = Int32.Parse(xps.Length > 1 ? xps.Remove(xps.Length -1) : xps);
                         skills[id] = xp;
-                        overallXP += xp;
+                        overallXP += xp; 
                     }
                     UserInfoFound = true;
                     updateSql();
@@ -83,6 +84,7 @@ namespace Collector {
             }
         }
         private void updateSql() {
+            skillTime = DateTime.Now;
             Command.updateUser(this);
         }
         private string[] UserSkillsInfo(string UserInfo, string start, string end, string[] sepatator) {
