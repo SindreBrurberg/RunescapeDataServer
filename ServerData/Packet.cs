@@ -72,6 +72,8 @@ namespace ServerData
     public enum PacketType 
     {
         Registration,
+        NewClan,
+        NewEvent,
         chat
     }
 }
