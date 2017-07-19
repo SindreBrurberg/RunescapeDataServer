@@ -10,7 +10,6 @@ namespace Collector {
         public Clan(string name) {
             this.name = name;
             this.users = new List<User>();
-            update();
         }
         public void update() {
             xp = 0;
