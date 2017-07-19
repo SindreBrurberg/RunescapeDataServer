@@ -6,8 +6,8 @@ using Collector;
 
 namespace Sql {
     class Object {
-        public static List<string> clans() {
-            List<string> clans = new List<string>();
+        public static List<Clan> clans() {
+            List<Clan> clans = new List<Clan>();
             try 
             { 
                 using (SqlConnection connection = new SqlConnection(Connection.CS()))
@@ -23,7 +23,7 @@ namespace Sql {
                         {
                             while (reader.Read())
                             {
-								clans.Add(reader["Name"].ToString());
+								clans.Add(new Clan(reader["Name"].ToString()));
                             }
                         }
                     }                    
