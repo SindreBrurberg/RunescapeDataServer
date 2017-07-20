@@ -36,7 +36,7 @@ namespace Collector {
             while (trie <= 3 && !UserInfoFound) {
                 trie++;
                 string UserInfo = Web.MakeAsyncRequest("https://apps.runescape.com/runemetrics/profile/profile?user=" + name + "&activities=0", "text/csv");
-                if (UserInfo.Contains("error")) { //Remember to remove the or case for charms
+                if (UserInfo.Contains("error")) {
                     Console.WriteLine("User info method one errored out, using method two");
                     try {
                         UserInfo = Web.MakeAsyncRequest("http://services.runescape.com/m=hiscore/index_lite.ws?player=" + name, "text/csv");
