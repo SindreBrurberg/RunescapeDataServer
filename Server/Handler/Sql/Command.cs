@@ -1,5 +1,6 @@
 using System;
 using System.Data.SqlClient;
+using Server;
 using Collector;
 
 namespace Sql {
@@ -48,19 +49,6 @@ namespace Sql {
             }
         }
 		public static void updateUser(User user) {
-            if (user.name.Equals("FatMine")) {
-                Console.WriteLine(
-                @"CRISES
-                USER IS FATMINE
-                OMG!!
-                READ THIS
-                CRISIS
-                OMG!!
-                !!!
-                !!!
-                !!!
-                !!!");
-            }
             int ClanID = 0;
 			try 
             { 
@@ -143,6 +131,34 @@ namespace Sql {
             catch (SqlException e)
             {
                 Console.WriteLine(e.ToString());
+            }
+		}
+		public static void NewClan(string name) {
+            Boolean inDatabase = false;
+            if (!Program.clanNames.Contains(name)) {
+                Program.clanNames.Add(name);
+                try 
+                { 
+                    using (SqlConnection connection = new SqlConnection(Connection.CS()))
+                    {
+                        connection.Open();
+                        using (SqlCommand command = new SqlCommand(String.newClan(), connection))
+                        {
+                                command.Parameters.AddWithValue("@name", name);
+                                command.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (SqlException e)
+                {
+                    Console.WriteLine(e.ToString());
+                    if (!e.ToString().Contains("Unique Clan Name")) {
+                        Program.clanNames.Remove(name);
+                        inDatabase = true;
+                    }
+                }
+                if(!inDatabase)
+                    Program.clans.Add(new Clan(name));
             }
 		}
     }

@@ -16,6 +16,7 @@ namespace Server
     {
         //public static List<string> clans;
         public static List<Clan> clans;
+        public static List<string> clanNames;
         static void Main(string[] args)
         {
             config();
@@ -34,6 +35,9 @@ namespace Server
             ConfigFile.init();
             Console.WriteLine("Config File Loaded");
             clans = Sql.Object.clans();
+            foreach (Clan clan in clans) {
+                clanNames.Add(clan.name);
+            }
         }
         private static void uppdateLoop(object stateInfo) {
             foreach (Clan clan in clans) {

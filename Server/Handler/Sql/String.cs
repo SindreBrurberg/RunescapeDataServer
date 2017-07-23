@@ -52,14 +52,20 @@ namespace Sql {
             StringBuilder sb = new StringBuilder();
             sb.Append("SELECT ID ");
             sb.Append("FROM [dbo].[Clan] ");
-            sb.Append("where name=@Name");
+            sb.Append("WHERE name=@Name");
             return sb.ToString();
         }
         public static string getClanNameFromClanIDSQL() {
             StringBuilder sb = new StringBuilder();
             sb.Append("SELECT Name ");
             sb.Append("FROM [dbo].[Clan] ");
-            sb.Append("where ID=@ID");
+            sb.Append("WHERE ID=@ID");
+            return sb.ToString();
+        }
+        public static string newClan() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("INSERT INTO [dbo].[Clan] (name) ");
+            sb.Append("VALUES (@name);");
             return sb.ToString();
         }
     }

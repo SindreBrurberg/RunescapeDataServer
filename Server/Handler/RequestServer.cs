@@ -3,7 +3,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Threading;
+using Collector;
 using Server;
+using Sql;
 using ServerData;
 
 namespace Handler
@@ -25,7 +27,7 @@ namespace Handler
             byte[] buffer;
             int readBytes;
             try {
-                for (;;) 
+                while (true) 
                 {
                     buffer = new byte[ClientSocket.SendBufferSize];
                     readBytes = ClientSocket.Receive(buffer);
@@ -51,11 +53,14 @@ namespace Handler
                         c.ClientSocket.Send(p.toBytes());
                     }
                     break;
+                case PacketType.NewClan:
+                    Command.NewClan(p.Gdata[0]);
+                    break;
             }
         }
 
         private static void ListenThread() {
-            for(;;) 
+            while (true) 
             {
                 ListenerSocket.Listen(0);
                 _Clients.Add(new ClientData(ListenerSocket.Accept()));
