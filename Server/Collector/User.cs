@@ -92,5 +92,21 @@ namespace Collector {
                 .Remove(UserInfo.IndexOf(end) - UserInfo.IndexOf(start) - start.Length)
                 .Split(sepatator, System.StringSplitOptions.RemoveEmptyEntries);
         }
+        public int xpForLevel(int level) {
+			double total = 0;
+			for (int i = 1; i < level; i++) {
+				total += Math.Floor(i + 300 * Math.Pow(2, i /7.0));
+			}
+			return (int)Math.Floor(total / 4);
+		}	
+		public int level (int xp) {
+			if (xpForLevel(99) < xp) {return 99;}
+			for (int i = 1; i < 100; i++) {
+				if (xpForLevel(i) > xp) { //kan bome med 1 xp
+					return i-1;
+				}
+			}
+			return 0;
+		}
     }
 }
