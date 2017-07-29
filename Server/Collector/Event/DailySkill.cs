@@ -1,0 +1,5 @@
+namespace Event {
+    class DailySkill {
+        
+    }
+}

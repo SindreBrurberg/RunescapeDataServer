@@ -9,6 +9,7 @@ using Handler;
 using Collector;
 using Sql;
 using ServerData;
+using Event;
 
 namespace Server
 {
@@ -16,10 +17,12 @@ namespace Server
     {
         //public static List<string> clans;
         public static List<Clan> clans;
-        public static List<string> clanNames;
+        public static List<string> clanNames = new List<string>();
         static void Main(string[] args)
         {
             config();
+            Event.EventHandler.initEvent(EventTypes.Skills, "Testern", Sql.Object.usersFromUserTable(clans[0].name).ToArray(), DateTime.Now, DateTime.Now.AddHours(2));
+            Console.ReadLine();
             uppdateLoop(null);
             Console.ReadLine();
             RequestServer.run();

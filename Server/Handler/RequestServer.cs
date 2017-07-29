@@ -54,7 +54,7 @@ namespace Handler
                     }
                     break;
                 case PacketType.NewClan:
-                    Command.NewClan(p.Gdata[0]);
+                    Command.newClan(p.Gdata[0]);
                     break;
             }
         }

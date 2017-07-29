@@ -6,9 +6,9 @@ namespace Collector {
     class User {
         public string name {get;}
         public string clan {get;}
-        public DateTime skillTime {get; private set;}
-        public int[] skills {get;}
-        public long overallXP {get; private set;}
+        public DateTime skillTime {get; protected set;}
+        public int[] skills {get; protected set;}
+        public long overallXP {get; protected set;}
         public bool UserInfoFound {get; private set;}
         private int trie = 0;
         public User(string name, string clan) {
@@ -87,6 +87,12 @@ namespace Collector {
             skillTime = DateTime.Now;
             Command.updateUser(this);
         }
+        public virtual void UpdateFromDB() {
+            User user = Sql.Object.userFromUserTable(name);
+            this.skills = user.skills;
+            this.overallXP = user.overallXP;
+            this.skillTime = user.skillTime;
+        }
         private string[] UserSkillsInfo(string UserInfo, string start, string end, string[] sepatator) {
             return UserInfo.Substring(UserInfo.IndexOf(start) + start.Length)
                 .Remove(UserInfo.IndexOf(end) - UserInfo.IndexOf(start) - start.Length)
@@ -102,7 +108,7 @@ namespace Collector {
 		public int level (int xp) {
 			if (xpForLevel(99) < xp) {return 99;}
 			for (int i = 1; i < 100; i++) {
-				if (xpForLevel(i) > xp) { //kan bome med 1 xp
+				if (xpForLevel(i) > xp) { //Can miss by 1 xp
 					return i-1;
 				}
 			}
