@@ -478,7 +478,8 @@ namespace Sql {
 								    events.Add(new Event.Event(reader["Name"].ToString(),
                                         usersFromEventUserTable(Int32.Parse(reader["ID"].ToString())).ToArray()));
                                 } else {
-
+                                    events.Add(new Event.Event(reader["Name"].ToString(),
+                                        teamsFromEventUserTable(Int32.Parse(reader["ID"].ToString())).ToArray()));
                                 }
                             }
                         }
