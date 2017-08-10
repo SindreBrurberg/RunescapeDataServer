@@ -16,7 +16,7 @@ namespace Event {
                 case EventTypes.DailySkills:
                     break;
             }
-            // Command.newEvent(eventName, eventType, false, startTime, endTime, intervallInMinutes);
+            Command.newEvent(eventName, eventType, false, startTime, endTime, intervallInMinutes);
             int eventID = Sql.Object.eventIDFromName(eventName);
             Console.WriteLine("EventID: {0}", eventID);
             Console.WriteLine("Partisipents length: {0}", partisipents.Length);
@@ -30,7 +30,6 @@ namespace Event {
         }
         public static void initEvent(EventTypes eventType, string eventName, User[] partisipents, DateTime startTime, DateTime endTime) 
         {
-            Console.WriteLine("New event");
             var eventPartisipents = new List<EventUser>();
             foreach (User user in partisipents) {
                 eventPartisipents.Add(new EventUser(user, new int[26]));
@@ -55,7 +54,6 @@ namespace Event {
         }
     }
     enum EventTypes {
-        
         Skills,
         DailySkills
     }

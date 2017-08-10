@@ -2,7 +2,7 @@ using Collector;
 
 namespace Event {
     class Event {
-        string name;
+        public string name{get; private set;}
         EventUser[] users;
         Team[] teams;
         int eventID;

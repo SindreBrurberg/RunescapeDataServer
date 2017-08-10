@@ -475,10 +475,8 @@ namespace Sql {
                             while (reader.Read())
                             {
                                 if (reader["isTeamed"].Equals(false)) {
-                                    Console.WriteLine(Int32.Parse(reader["ID"].ToString()));
-                                    string name = reader["Name"].ToString();
-								    events.Add(new Event.Event(name,
-                                        usersFromEventUserTable(14).ToArray()));
+								    events.Add(new Event.Event(reader["Name"].ToString(),
+                                        usersFromEventUserTable(Int32.Parse(reader["ID"].ToString())).ToArray()));
                                 } else {
 
                                 }

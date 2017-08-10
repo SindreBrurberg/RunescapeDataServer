@@ -1,4 +1,5 @@
 using System.Text;
+using System;
 
 namespace Sql {
     class String {
@@ -146,6 +147,13 @@ namespace Sql {
             StringBuilder sb = new StringBuilder();
             sb.Append("INSERT INTO [dbo].[Event] ([Name], [Type], [isTeamed], [startTime], [endTime], [intervalMinutes]) ");
             sb.Append("VALUES (@Name, @Type, @isTeamed, @startTime, @endTime, @intervalMinutes);");
+            return sb.ToString();
+        }
+        public static string eventsNotEnded() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT * ");
+            sb.Append("FROM [dbo].[Event] ");
+            sb.Append("WHERE EndTime > '" + DateTime.Now + "'");
             return sb.ToString();
         }
         public static string getTeamNameFromIDSQL() {

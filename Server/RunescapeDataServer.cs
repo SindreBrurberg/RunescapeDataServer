@@ -21,7 +21,11 @@ namespace Server
         static void Main(string[] args)
         {
             config();
-            Event.EventHandler.initEvent(EventTypes.Skills, "Testern", Sql.Object.usersFromUserTable(clans[0].name).ToArray(), DateTime.Now, DateTime.Now.AddHours(2));
+            Event.EventHandler.initEvent(EventTypes.Skills, DateTime.Now.ToString(),
+                Sql.Object.usersFromUserTable(clans[0].name).ToArray(), DateTime.Now, DateTime.Now.AddHours(2));
+            foreach(Event.Event evt in Sql.Object.eventsNotEnded()) {
+                Console.WriteLine(evt.name);
+            }
             Console.ReadLine();
             uppdateLoop(null);
             Console.ReadLine();

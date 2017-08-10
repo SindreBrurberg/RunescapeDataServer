@@ -8,5 +8,9 @@ namespace Event {
         public Skill (string name, Team[] teams) : base(name, teams) {
             
         }
+
+        public void update() {
+            
+        }
     }
 }
