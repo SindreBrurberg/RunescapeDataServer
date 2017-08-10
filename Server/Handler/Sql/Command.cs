@@ -50,28 +50,11 @@ namespace Sql {
             }
         }
 		public static void updateUser(User user) {
-            int ClanID = 0;
 			try 
             { 
                 using (SqlConnection connection = new SqlConnection(Connection.CS()))
                 {
                     connection.Open(); 
-                    
-                    using (SqlCommand command = new SqlCommand(String.getClanIDFromClanNameSQL(), connection))
-                    {
-                        command.Parameters.AddWithValue("@Name", user.clan);
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-								ClanID = Int32.Parse(reader["ID"].ToString());
-                            }
-                        }
-                    } 
-                    if (ClanID == 0) {
-                        Console.WriteLine("Invalid Clan");
-                        return;
-                    }
                     SqlCommand cmdCount = new SqlCommand("SELECT count(*) from [dbo].[User] WHERE name = @Name", connection);
                     cmdCount.Parameters.AddWithValue("@Name", user.name);
                     int count = (int)cmdCount.ExecuteScalar();
@@ -84,13 +67,13 @@ namespace Sql {
                                 while (reader.Read()){
                                     if (Int64.Parse(reader["Overall"].ToString()) < Int64.Parse(user.overallXP.ToString())) 
                                     {
-                                        runSQLQuerry(String.updateUserSQL(), user, ClanID);
+                                        runSQLQuerry(String.updateUserSQL(), user, user.clan);
                                     }     
                                 }
                             }
                         }
                     } else {
-                        runSQLQuerry(String.insertUserSQL(), user, ClanID);
+                        runSQLQuerry(String.insertUserSQL(), user, user.clan);
                     }
                 }
             }
@@ -145,35 +128,35 @@ namespace Sql {
                     {
                         Console.WriteLine("Inserting eventuser {0}", user.name);
                         // The structure of this is because of the ID per skill!!!
-                        command.Parameters.AddWithValue("@Username", user.name);
-                        command.Parameters.AddWithValue("@AttackXP", user.skills[0]);
-                        command.Parameters.AddWithValue("@DefenceXP", user.skills[1]);
-                        command.Parameters.AddWithValue("@StrengthXP", user.skills[2]);
-                        command.Parameters.AddWithValue("@ConstitutionXP", user.skills[3]);
-                        command.Parameters.AddWithValue("@RangedXP", user.skills[4]);
-                        command.Parameters.AddWithValue("@PrayerXP", user.skills[5]);
-                        command.Parameters.AddWithValue("@MagicXP", user.skills[6]);
-                        command.Parameters.AddWithValue("@CookingXP", user.skills[7]);
-                        command.Parameters.AddWithValue("@WoodcuttingXP", user.skills[8]);
-                        command.Parameters.AddWithValue("@FletchingXP", user.skills[9]);
-                        command.Parameters.AddWithValue("@FishingXP", user.skills[10]);
-                        command.Parameters.AddWithValue("@FiremakingXP", user.skills[11]);
-                        command.Parameters.AddWithValue("@CraftingXP", user.skills[12]);
-                        command.Parameters.AddWithValue("@SmithingXP", user.skills[13]);
-                        command.Parameters.AddWithValue("@MiningXP", user.skills[14]);
-                        command.Parameters.AddWithValue("@HerbloreXP", user.skills[15]);
-                        command.Parameters.AddWithValue("@AgilityXP", user.skills[16]);
-                        command.Parameters.AddWithValue("@ThievingXP", user.skills[17]);
-                        command.Parameters.AddWithValue("@SlayerXP", user.skills[18]);
-                        command.Parameters.AddWithValue("@FarmingXP", user.skills[19]);
-                        command.Parameters.AddWithValue("@RunecraftingXP", user.skills[20]);
-                        command.Parameters.AddWithValue("@HunterXP", user.skills[21]);
-                        command.Parameters.AddWithValue("@ConstructionXP", user.skills[22]);
-                        command.Parameters.AddWithValue("@SummoningXP", user.skills[23]);
-                        command.Parameters.AddWithValue("@DungeoneeringXP", user.skills[24]);
-                        command.Parameters.AddWithValue("@DivinationXP", user.skills[25]);
-                        command.Parameters.AddWithValue("@InventionXP", user.skills[26]);
-                        command.Parameters.AddWithValue("@OverallXP", user.overallXP);
+                        command.Parameters.AddWithValue("@Name", user.name);
+                        command.Parameters.AddWithValue("@Attack", user.skills[0]);
+                        command.Parameters.AddWithValue("@Defence", user.skills[1]);
+                        command.Parameters.AddWithValue("@Strength", user.skills[2]);
+                        command.Parameters.AddWithValue("@Constitution", user.skills[3]);
+                        command.Parameters.AddWithValue("@Ranged", user.skills[4]);
+                        command.Parameters.AddWithValue("@Prayer", user.skills[5]);
+                        command.Parameters.AddWithValue("@Magic", user.skills[6]);
+                        command.Parameters.AddWithValue("@Cooking", user.skills[7]);
+                        command.Parameters.AddWithValue("@Woodcutting", user.skills[8]);
+                        command.Parameters.AddWithValue("@Fletching", user.skills[9]);
+                        command.Parameters.AddWithValue("@Fishing", user.skills[10]);
+                        command.Parameters.AddWithValue("@Firemaking", user.skills[11]);
+                        command.Parameters.AddWithValue("@Crafting", user.skills[12]);
+                        command.Parameters.AddWithValue("@Smithing", user.skills[13]);
+                        command.Parameters.AddWithValue("@Mining", user.skills[14]);
+                        command.Parameters.AddWithValue("@Herblore", user.skills[15]);
+                        command.Parameters.AddWithValue("@Agility", user.skills[16]);
+                        command.Parameters.AddWithValue("@Thieving", user.skills[17]);
+                        command.Parameters.AddWithValue("@Slayer", user.skills[18]);
+                        command.Parameters.AddWithValue("@Farming", user.skills[19]);
+                        command.Parameters.AddWithValue("@Runecrafting", user.skills[20]);
+                        command.Parameters.AddWithValue("@Hunter", user.skills[21]);
+                        command.Parameters.AddWithValue("@Construction", user.skills[22]);
+                        command.Parameters.AddWithValue("@Summoning", user.skills[23]);
+                        command.Parameters.AddWithValue("@Dungeoneering", user.skills[24]);
+                        command.Parameters.AddWithValue("@Divination", user.skills[25]);
+                        command.Parameters.AddWithValue("@Invention", user.skills[26]);
+                        command.Parameters.AddWithValue("@Overall", user.overallXP);
                         command.Parameters.AddWithValue("@SkillTime", user.skillTime);
                         if (teamID == null) {
                             command.Parameters.AddWithValue("@TeamID", 1);

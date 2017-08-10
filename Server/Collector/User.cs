@@ -5,32 +5,25 @@ using Sql;
 namespace Collector {
     class User {
         public string name {get;}
-        public string clan {get;}
+        public int clan {get;}
         public DateTime skillTime {get; protected set;}
         public int[] skills {get; protected set;}
         public long overallXP {get; protected set;}
         public bool UserInfoFound {get; private set;}
         private int trie = 0;
-        public User(string name, string clan) {
+        public User(string name, int clan) {
             this.name = name;
             this.clan = clan;
             this.skills = new int[27];
             this.skillTime = DateTime.Now;
         }
-        public User(string name, string clan, int[] skills, long overallXP, DateTime skillTime) {
+        public User(string name, int clan, int[] skills, long overallXP, DateTime skillTime) {
             this.name = name;
             this.clan = clan;
             this.skills = skills;
             this.overallXP = overallXP;
             this.skillTime = skillTime;
         }
-        public User(string name, int[] skills, long overallXP, DateTime skillTime) {
-            this.name = name;
-            this.skills = skills;
-            this.overallXP = overallXP;
-            this.skillTime = skillTime;
-        }
-
         public void update() {
             Console.WriteLine("Uppdating user: {0}", name);
             while (trie <= 3 && !UserInfoFound) {

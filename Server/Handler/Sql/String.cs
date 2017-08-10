@@ -26,17 +26,17 @@ namespace Sql {
         }
         public static string insertNewEventUserSQL() {
             StringBuilder sb = new StringBuilder();
-            sb.Append("INSERT INTO [dbo].[EventUser] ([Username], [EventID], [AttackXP], [StrengthXP], [DefenceXP], [RangedXP], [PrayerXP], [MagicXP], [ConstitutionXP], [CraftingXP]");
-            sb.Append(", [MiningXP], [SmithingXP], [FishingXP], [CookingXP], [FiremakingXP], [WoodcuttingXP], [RunecraftingXP], [DungeoneeringXP], [AgilityXP], [HerbloreXP]");
-            sb.Append(", [ThievingXP], [FletchingXP], [SlayerXP], [FarmingXP], [ConstructionXP], [HunterXP], [SummoningXP], [DivinationXP], [InventionXP], [OverallXP], [TeamID], [SkillTime])");
-            sb.Append("VALUES (@Username, @EventID, @AttackXP, @StrengthXP, @DefenceXP, @RangedXP, @PrayerXP, @MagicXP, @ConstitutionXP, @CraftingXP, @MiningXP, @SmithingXP");
-            sb.Append(", @FishingXP, @CookingXP, @FiremakingXP, @WoodcuttingXP, @RunecraftingXP, @DungeoneeringXP, @AgilityXP, @HerbloreXP, @ThievingXP, @FletchingXP, @SlayerXP");
-            sb.Append(", @FarmingXP, @ConstructionXP, @HunterXP, @SummoningXP, @DivinationXP, @InventionXP, @OverallXP, @TeamID, @SkillTime);");
+            sb.Append("INSERT INTO [dbo].[EventUser] ([Name], [EventID], [Attack], [Strength], [Defence], [Ranged], [Prayer], [Magic], [Constitution], [Crafting]");
+            sb.Append(", [Mining], [Smithing], [Fishing], [Cooking], [Firemaking], [Woodcutting], [Runecrafting], [Dungeoneering], [Agility], [Herblore]");
+            sb.Append(", [Thieving], [Fletching], [Slayer], [Farming], [Construction], [Hunter], [Summoning], [Divination], [Invention], [Overall], [TeamID], [SkillTime])");
+            sb.Append("VALUES (@Name, @EventID, @Attack, @Strength, @Defence, @Ranged, @Prayer, @Magic, @Constitution, @Crafting, @Mining, @Smithing");
+            sb.Append(", @Fishing, @Cooking, @Firemaking, @Woodcutting, @Runecrafting, @Dungeoneering, @Agility, @Herblore, @Thieving, @Fletching, @Slayer");
+            sb.Append(", @Farming, @Construction, @Hunter, @Summoning, @Divination, @Invention, @Overall, @TeamID, @SkillTime);");
             return sb.ToString();
         }
         public static string insertEventUserSQL() {
             StringBuilder sb = new StringBuilder();
-            sb.Append("INSERT INTO [dbo].[EventUser] ([Username], [EventID], [AttackXP], [StrengthXP], [DefenceXP], [RangedXP], [PrayerXP], [MagicXP], [ConstitutionXP], [CraftingXP]");
+            sb.Append("INSERT INTO [dbo].[EventUser] ([Name], [EventID], [AttackXP], [StrengthXP], [DefenceXP], [RangedXP], [PrayerXP], [MagicXP], [ConstitutionXP], [CraftingXP]");
             sb.Append(", [MiningXP], [SmithingXP], [FishingXP], [CookingXP], [FiremakingXP], [WoodcuttingXP], [RunecraftingXP], [DungeoneeringXP], [AgilityXP], [HerbloreXP]");
             sb.Append(", [ThievingXP], [FletchingXP], [SlayerXP], [FarmingXP], [ConstructionXP], [HunterXP], [SummoningXP], [DivinationXP], [InventionXP], [OverallXP]");
             sb.Append(", [AttackPoints], [StrengthPoints], [DefencePoints], [RangedPoints], [PrayerPoints], [MagicPoints], [ConstitutionPoints]");
@@ -67,7 +67,7 @@ namespace Sql {
             sb.Append(", [HerblorePoints] = @HerblorePoints, [ThievingPoints] = @ThievingPoints, [FletchingPoints] = @FletchingPoints, [SlayerPoints] = @SlayerPoints");
             sb.Append(", [FarmingPoints] = @FarmingPoints, [ConstructionPoints] = @ConstructionPoints, [HunterPoints] = @HunterPoints, [SummoningPoints] = @SummoningPoints");
             sb.Append(", [DivinationPoints] = @DivinationPoints, [InventionPoints] = @InventionPoints, [OverallPoints] = @OverallPoints, [SkillTime] = @SkillTime ");
-            sb.Append("WHERE Username = @Username AND eventID = @eventID");
+            sb.Append("WHERE Name = @Name AND eventID = @eventID");
             return sb.ToString();
         }
         public static string insertUserTimeSQL() {

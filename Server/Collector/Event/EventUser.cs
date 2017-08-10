@@ -7,18 +7,22 @@ namespace Event {
         public long overallPoints {get;}
         public int eventID {get;}
         public int teamID {get;}
-        public EventUser(string name, string clan, int eventID) : base(name, clan) {
+        public EventUser(string name, int clan, int eventID) : base(name, clan) {
             UpdateFromDB();
             this.eventID = eventID;
         }
-        public EventUser(string name, int[] skills, int[] points, long overallXP, long overallPoints, DateTime skillTime) : base(name, skills, overallXP, skillTime) {
+        public EventUser(string name, int clan, int[] skills, int[] points, long overallXP, long overallPoints, DateTime skillTime)
+            : base(name, clan, skills, overallXP, skillTime) 
+        {
             this.points = points;
             this.overallPoints = overallPoints;
         }
-        public EventUser(User user, int[] points) : base(user.name, user.skills, user.overallXP, user.skillTime) {
+        public EventUser(User user, int[] points) : base(user.name, user.clan, user.skills, user.overallXP, user.skillTime) {
             this.points = points;
         }
-        public EventUser(string name, int[] skills, int[] points, long overallXP, long overallPoints, DateTime skillTime, int teamID) : base(name, skills, overallXP, skillTime) {
+        public EventUser(string name, int clan, int[] skills, int[] points, long overallXP, long overallPoints, DateTime skillTime, int teamID)
+            : base(name, clan, skills, overallXP, skillTime) 
+        {
             this.points = points;
             this.overallPoints = overallPoints;
             this.teamID = teamID;

@@ -6,10 +6,12 @@ namespace Collector {
     class Clan {
         public List<User> users {get;}
         public string name {get;}
+        public int id {get;}
         public long xp {get; private set;}
         private List<string> usernames = new List<string>();
         public Clan(string name) {
             this.name = name;
+            this.id = Sql.Object.clanIDFromName(name);
             this.users = new List<User>();
         }
         public void update() {
@@ -20,7 +22,7 @@ namespace Collector {
                 if (i % 4 == 0) {
                     string username = items[i].Replace("?", " ");
                     if (!usernames.Contains(username)) {
-                        this.users.Add(new User(username, name));
+                        this.users.Add(new User(username, id));
                         usernames.Add(username);
                     }
                 }

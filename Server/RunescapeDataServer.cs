@@ -22,7 +22,7 @@ namespace Server
         {
             config();
             Event.EventHandler.initEvent(EventTypes.Skills, DateTime.Now.ToString(),
-                Sql.Object.usersFromUserTable(clans[0].name).ToArray(), DateTime.Now, DateTime.Now.AddHours(2));
+                Sql.Object.usersFromUserTable(clans[0].name).ToArray(), DateTime.Now, DateTime.Now);
             foreach(Event.Event evt in Sql.Object.eventsNotEnded()) {
                 Console.WriteLine(evt.name);
             }
