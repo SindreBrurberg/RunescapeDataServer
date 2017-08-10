@@ -1,0 +1,933 @@
+/*    ==Scripting Parameters==
+
+    Source Database Engine Edition : Microsoft Azure SQL Database Edition
+    Source Database Engine Type : Microsoft Azure SQL Database
+
+    Target Server Version : SQL Server 2017
+    Target Database Engine Edition : Microsoft SQL Server Standard Edition
+    Target Database Engine Type : Standalone SQL Server
+*/
+
+USE [master]
+GO
+/****** Object:  Database [RunescapeMinigames]    Script Date: 8/10/2017 7:41:39 PM ******/
+CREATE DATABASE [RunescapeMinigames]
+GO
+ALTER DATABASE [RunescapeMinigames] SET COMPATIBILITY_LEVEL = 130
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [RunescapeMinigames].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [RunescapeMinigames] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [RunescapeMinigames] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET ALLOW_SNAPSHOT_ISOLATION ON 
+GO
+ALTER DATABASE [RunescapeMinigames] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [RunescapeMinigames] SET READ_COMMITTED_SNAPSHOT ON 
+GO
+ALTER DATABASE [RunescapeMinigames] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET  MULTI_USER 
+GO
+ALTER DATABASE [RunescapeMinigames] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [RunescapeMinigames] SET ENCRYPTION ON
+GO
+ALTER DATABASE [RunescapeMinigames] SET QUERY_STORE = ON
+GO
+ALTER DATABASE [RunescapeMinigames] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 7), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 10, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO)
+GO
+USE [RunescapeMinigames]
+GO
+ALTER DATABASE SCOPED CONFIGURATION SET IDENTITY_CACHE = ON;
+GO
+ALTER DATABASE SCOPED CONFIGURATION SET LEGACY_CARDINALITY_ESTIMATION = OFF;
+GO
+ALTER DATABASE SCOPED CONFIGURATION FOR SECONDARY SET LEGACY_CARDINALITY_ESTIMATION = PRIMARY;
+GO
+ALTER DATABASE SCOPED CONFIGURATION SET MAXDOP = 0;
+GO
+ALTER DATABASE SCOPED CONFIGURATION FOR SECONDARY SET MAXDOP = PRIMARY;
+GO
+ALTER DATABASE SCOPED CONFIGURATION SET PARAMETER_SNIFFING = ON;
+GO
+ALTER DATABASE SCOPED CONFIGURATION FOR SECONDARY SET PARAMETER_SNIFFING = PRIMARY;
+GO
+ALTER DATABASE SCOPED CONFIGURATION SET QUERY_OPTIMIZER_HOTFIXES = OFF;
+GO
+ALTER DATABASE SCOPED CONFIGURATION FOR SECONDARY SET QUERY_OPTIMIZER_HOTFIXES = PRIMARY;
+GO
+USE [RunescapeMinigames]
+GO
+/****** Object:  UserDefinedFunction [dbo].[fn_diagramobjects]    Script Date: 8/10/2017 7:41:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+	CREATE FUNCTION [dbo].[fn_diagramobjects]() 
+	RETURNS int
+	WITH EXECUTE AS N'dbo'
+	AS
+	BEGIN
+		declare @id_upgraddiagrams		int
+		declare @id_sysdiagrams			int
+		declare @id_helpdiagrams		int
+		declare @id_helpdiagramdefinition	int
+		declare @id_creatediagram	int
+		declare @id_renamediagram	int
+		declare @id_alterdiagram 	int 
+		declare @id_dropdiagram		int
+		declare @InstalledObjects	int
+
+		select @InstalledObjects = 0
+
+		select 	@id_upgraddiagrams = object_id(N'dbo.sp_upgraddiagrams'),
+			@id_sysdiagrams = object_id(N'dbo.sysdiagrams'),
+			@id_helpdiagrams = object_id(N'dbo.sp_helpdiagrams'),
+			@id_helpdiagramdefinition = object_id(N'dbo.sp_helpdiagramdefinition'),
+			@id_creatediagram = object_id(N'dbo.sp_creatediagram'),
+			@id_renamediagram = object_id(N'dbo.sp_renamediagram'),
+			@id_alterdiagram = object_id(N'dbo.sp_alterdiagram'), 
+			@id_dropdiagram = object_id(N'dbo.sp_dropdiagram')
+
+		if @id_upgraddiagrams is not null
+			select @InstalledObjects = @InstalledObjects + 1
+		if @id_sysdiagrams is not null
+			select @InstalledObjects = @InstalledObjects + 2
+		if @id_helpdiagrams is not null
+			select @InstalledObjects = @InstalledObjects + 4
+		if @id_helpdiagramdefinition is not null
+			select @InstalledObjects = @InstalledObjects + 8
+		if @id_creatediagram is not null
+			select @InstalledObjects = @InstalledObjects + 16
+		if @id_renamediagram is not null
+			select @InstalledObjects = @InstalledObjects + 32
+		if @id_alterdiagram  is not null
+			select @InstalledObjects = @InstalledObjects + 64
+		if @id_dropdiagram is not null
+			select @InstalledObjects = @InstalledObjects + 128
+		
+		return @InstalledObjects 
+	END
+	
+GO
+/****** Object:  Table [dbo].[Clan]    Script Date: 8/10/2017 7:41:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Clan](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](16) NOT NULL,
+ CONSTRAINT [PK_Clan_1] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON),
+ CONSTRAINT [Unique Clan Name] UNIQUE NONCLUSTERED 
+(
+	[Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
+/****** Object:  Table [dbo].[Event]    Script Date: 8/10/2017 7:41:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Event](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[Type] [varchar](50) NOT NULL,
+	[isTeamed] [bit] NOT NULL,
+	[StartTime] [datetime] NOT NULL,
+	[EndTime] [datetime] NOT NULL,
+	[IntervalMinutes] [smallint] NOT NULL,
+ CONSTRAINT [PK_Event] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON),
+ CONSTRAINT [IX_Event] UNIQUE NONCLUSTERED 
+(
+	[Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
+/****** Object:  Table [dbo].[EventUser]    Script Date: 8/10/2017 7:41:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[EventUser](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[EventID] [int] NOT NULL,
+	[Name] [varchar](12) NOT NULL,
+	[Attack] [int] NULL,
+	[AttackPoints] [int] NULL,
+	[Strength] [int] NULL,
+	[StrengthPoints] [int] NULL,
+	[Defence] [int] NULL,
+	[DefencePoints] [int] NULL,
+	[Ranged] [int] NULL,
+	[RangedPoints] [int] NULL,
+	[Prayer] [int] NULL,
+	[PrayerPoints] [int] NULL,
+	[Magic] [int] NULL,
+	[MagicPoints] [int] NULL,
+	[Constitution] [int] NULL,
+	[ConstitutionPoints] [int] NULL,
+	[Crafting] [int] NULL,
+	[CraftingPoints] [int] NULL,
+	[Mining] [int] NULL,
+	[MiningPoints] [int] NULL,
+	[Smithing] [int] NULL,
+	[SmithingPoints] [int] NULL,
+	[Fishing] [int] NULL,
+	[FishingPoints] [int] NULL,
+	[Cooking] [int] NULL,
+	[CookingPoints] [int] NULL,
+	[Firemaking] [int] NULL,
+	[FiremakingPoints] [int] NULL,
+	[Woodcutting] [int] NULL,
+	[WoodcuttingPoints] [int] NULL,
+	[Runecrafting] [int] NULL,
+	[RunecraftingPoints] [int] NULL,
+	[Dungeoneering] [int] NULL,
+	[DungeoneeringPoints] [int] NULL,
+	[Agility] [int] NULL,
+	[AgilityPoints] [int] NULL,
+	[Herblore] [int] NULL,
+	[HerblorePoints] [int] NULL,
+	[Thieving] [int] NULL,
+	[ThievingPoints] [int] NULL,
+	[Fletching] [int] NULL,
+	[FletchingPoints] [int] NULL,
+	[Slayer] [int] NULL,
+	[SlayerPoints] [int] NULL,
+	[Farming] [int] NULL,
+	[FarmingPoints] [int] NULL,
+	[Construction] [int] NULL,
+	[ConstructionPoints] [int] NULL,
+	[Hunter] [int] NULL,
+	[HunterPoints] [int] NULL,
+	[Summoning] [int] NULL,
+	[SummoningPoints] [int] NULL,
+	[Divination] [int] NULL,
+	[DivinationPoints] [int] NULL,
+	[Invention] [int] NULL,
+	[InventionPoints] [int] NULL,
+	[Overall] [bigint] NULL,
+	[OverallPoints] [bigint] NULL,
+	[TeamID] [int] NULL,
+	[SkillTime] [datetime] NOT NULL,
+ CONSTRAINT [PK_EventUser] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON),
+ CONSTRAINT [IX_EventUser] UNIQUE NONCLUSTERED 
+(
+	[EventID] ASC,
+	[Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
+/****** Object:  Table [dbo].[EventUserTime]    Script Date: 8/10/2017 7:41:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[EventUserTime](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[EventUserID] [int] NOT NULL,
+	[SkillTime] [datetime] NOT NULL,
+	[AttackXP] [int] NULL,
+	[AttackPoints] [int] NULL,
+	[StrengthXP] [int] NULL,
+	[StrengthPoints] [int] NULL,
+	[DefenceXP] [int] NULL,
+	[DefencePoints] [int] NULL,
+	[RangedXP] [int] NULL,
+	[RangedPoints] [int] NULL,
+	[PrayerXP] [int] NULL,
+	[PrayerPoints] [int] NULL,
+	[MagicXP] [int] NULL,
+	[MagicPoints] [int] NULL,
+	[ConstitutionXP] [int] NULL,
+	[ConstitutionPoints] [int] NULL,
+	[CraftingXP] [int] NULL,
+	[CraftingPoints] [int] NULL,
+	[MiningXP] [int] NULL,
+	[MiningPoints] [int] NULL,
+	[SmithingXP] [int] NULL,
+	[SmithingPoints] [int] NULL,
+	[FishingXP] [int] NULL,
+	[FishingPoints] [int] NULL,
+	[CookingXP] [int] NULL,
+	[CookingPoints] [int] NULL,
+	[FiremakingXP] [int] NULL,
+	[FiremakingPoints] [int] NULL,
+	[WoodcuttingXP] [int] NULL,
+	[WoodcuttingPoints] [int] NULL,
+	[RunecraftingXP] [int] NULL,
+	[RunecraftingPoints] [int] NULL,
+	[DungeoneeringXP] [int] NULL,
+	[DungeoneeringPoints] [int] NULL,
+	[AgilityXP] [int] NULL,
+	[AgilityPoints] [int] NULL,
+	[HerbloreXP] [int] NULL,
+	[HerblorePoints] [int] NULL,
+	[ThievingXP] [int] NULL,
+	[ThievingPoints] [int] NULL,
+	[FletchingXP] [int] NULL,
+	[FletchingPoints] [int] NULL,
+	[SlayerXP] [int] NULL,
+	[SlayerPoints] [int] NULL,
+	[FarmingXP] [int] NULL,
+	[FarmingPoints] [int] NULL,
+	[ConstructionXP] [int] NULL,
+	[ConstructionPoints] [int] NULL,
+	[HunterXP] [int] NULL,
+	[HunterPoints] [int] NULL,
+	[SummoningXP] [int] NULL,
+	[SummoningPoints] [int] NULL,
+	[DivinationXP] [int] NULL,
+	[DivinationPoints] [int] NULL,
+	[InventionXP] [int] NULL,
+	[InventionPoints] [int] NULL,
+	[OverallXP] [bigint] NOT NULL,
+	[OverallPoints] [bigint] NOT NULL,
+ CONSTRAINT [PK_EventUserTime] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
+/****** Object:  Table [dbo].[Skill]    Script Date: 8/10/2017 7:41:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Skill](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[EventID] [int] NOT NULL,
+	[SkillName] [varchar](20) NOT NULL,
+	[StartTime] [datetime] NOT NULL,
+	[EndTime] [datetime] NOT NULL,
+ CONSTRAINT [PK_Skill] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON),
+ CONSTRAINT [IX_Skill] UNIQUE NONCLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
+/****** Object:  Table [dbo].[sysdiagrams]    Script Date: 8/10/2017 7:41:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[sysdiagrams](
+	[name] [sysname] NOT NULL,
+	[principal_id] [int] NOT NULL,
+	[diagram_id] [int] IDENTITY(1,1) NOT NULL,
+	[version] [int] NULL,
+	[definition] [varbinary](max) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[diagram_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON),
+ CONSTRAINT [UK_principal_name] UNIQUE NONCLUSTERED 
+(
+	[principal_id] ASC,
+	[name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
+/****** Object:  Table [dbo].[Team]    Script Date: 8/10/2017 7:41:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Team](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+ CONSTRAINT [PK_Team] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
+/****** Object:  Table [dbo].[User]    Script Date: 8/10/2017 7:41:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[User](
+	[Name] [varchar](12) NOT NULL,
+	[Attack] [int] NOT NULL,
+	[Defence] [int] NOT NULL,
+	[Strength] [int] NOT NULL,
+	[Constitution] [int] NOT NULL,
+	[Ranged] [int] NOT NULL,
+	[Prayer] [int] NOT NULL,
+	[Magic] [int] NOT NULL,
+	[Cooking] [int] NOT NULL,
+	[Woodcutting] [int] NOT NULL,
+	[Fletching] [int] NOT NULL,
+	[Fishing] [int] NOT NULL,
+	[Firemaking] [int] NOT NULL,
+	[Crafting] [int] NOT NULL,
+	[Smithing] [int] NOT NULL,
+	[Mining] [int] NOT NULL,
+	[Herblore] [int] NOT NULL,
+	[Agility] [int] NOT NULL,
+	[Thieving] [int] NOT NULL,
+	[Slayer] [int] NOT NULL,
+	[Farming] [int] NOT NULL,
+	[Runecrafting] [int] NOT NULL,
+	[Hunter] [int] NOT NULL,
+	[Construction] [int] NOT NULL,
+	[Summoning] [int] NOT NULL,
+	[Dungeoneering] [int] NOT NULL,
+	[Divination] [int] NOT NULL,
+	[Invention] [int] NOT NULL,
+	[Overall] [bigint] NOT NULL,
+	[ClanID] [int] NOT NULL,
+	[SkillTime] [datetime] NOT NULL,
+ CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED 
+(
+	[Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
+/****** Object:  Table [dbo].[UserTime]    Script Date: 8/10/2017 7:41:41 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserTime](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Username] [varchar](12) NOT NULL,
+	[SkillTime] [datetime] NOT NULL,
+	[Attack] [int] NOT NULL,
+	[Strength] [int] NOT NULL,
+	[Defence] [int] NOT NULL,
+	[Ranged] [int] NOT NULL,
+	[Prayer] [int] NOT NULL,
+	[Magic] [int] NOT NULL,
+	[Constitution] [int] NOT NULL,
+	[Crafting] [int] NOT NULL,
+	[Mining] [int] NOT NULL,
+	[Smithing] [int] NOT NULL,
+	[Fishing] [int] NOT NULL,
+	[Cooking] [int] NOT NULL,
+	[Firemaking] [int] NOT NULL,
+	[Woodcutting] [int] NOT NULL,
+	[Runecrafting] [int] NOT NULL,
+	[Dungeoneering] [int] NOT NULL,
+	[Agility] [int] NOT NULL,
+	[Herblore] [int] NOT NULL,
+	[Thieving] [int] NOT NULL,
+	[Fletching] [int] NOT NULL,
+	[Slayer] [int] NOT NULL,
+	[Farming] [int] NOT NULL,
+	[Construction] [int] NOT NULL,
+	[Hunter] [int] NOT NULL,
+	[Summoning] [int] NOT NULL,
+	[Divination] [int] NOT NULL,
+	[Invention] [int] NOT NULL,
+	[Overall] [bigint] NOT NULL,
+ CONSTRAINT [PK_UserTime_1] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_User]    Script Date: 8/10/2017 7:41:41 PM ******/
+CREATE UNIQUE NONCLUSTERED INDEX [IX_User] ON [dbo].[User]
+(
+	[Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+GO
+ALTER TABLE [dbo].[Event] ADD  CONSTRAINT [DF_Event_isTeamed]  DEFAULT ((0)) FOR [isTeamed]
+GO
+ALTER TABLE [dbo].[Event] ADD  CONSTRAINT [DF_Event_IntervalMinutes]  DEFAULT ((30)) FOR [IntervalMinutes]
+GO
+ALTER TABLE [dbo].[EventUser]  WITH CHECK ADD  CONSTRAINT [FK_EventUser_Event] FOREIGN KEY([EventID])
+REFERENCES [dbo].[Event] ([ID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[EventUser] CHECK CONSTRAINT [FK_EventUser_Event]
+GO
+ALTER TABLE [dbo].[EventUser]  WITH CHECK ADD  CONSTRAINT [FK_EventUser_Team] FOREIGN KEY([TeamID])
+REFERENCES [dbo].[Team] ([ID])
+GO
+ALTER TABLE [dbo].[EventUser] CHECK CONSTRAINT [FK_EventUser_Team]
+GO
+ALTER TABLE [dbo].[EventUser]  WITH CHECK ADD  CONSTRAINT [FK_EventUser_User] FOREIGN KEY([Name])
+REFERENCES [dbo].[User] ([Name])
+ON UPDATE CASCADE
+GO
+ALTER TABLE [dbo].[EventUser] CHECK CONSTRAINT [FK_EventUser_User]
+GO
+ALTER TABLE [dbo].[EventUserTime]  WITH CHECK ADD  CONSTRAINT [FK_EventUserTime_EventUser] FOREIGN KEY([EventUserID])
+REFERENCES [dbo].[EventUser] ([ID])
+GO
+ALTER TABLE [dbo].[EventUserTime] CHECK CONSTRAINT [FK_EventUserTime_EventUser]
+GO
+ALTER TABLE [dbo].[Skill]  WITH CHECK ADD  CONSTRAINT [FK_Skill_Event] FOREIGN KEY([EventID])
+REFERENCES [dbo].[Event] ([ID])
+GO
+ALTER TABLE [dbo].[Skill] CHECK CONSTRAINT [FK_Skill_Event]
+GO
+ALTER TABLE [dbo].[User]  WITH CHECK ADD  CONSTRAINT [FK_User_Clan] FOREIGN KEY([ClanID])
+REFERENCES [dbo].[Clan] ([ID])
+GO
+ALTER TABLE [dbo].[User] CHECK CONSTRAINT [FK_User_Clan]
+GO
+ALTER TABLE [dbo].[UserTime]  WITH NOCHECK ADD  CONSTRAINT [FK_UserTime_User] FOREIGN KEY([Username])
+REFERENCES [dbo].[User] ([Name])
+ON UPDATE CASCADE
+GO
+ALTER TABLE [dbo].[UserTime] NOCHECK CONSTRAINT [FK_UserTime_User]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_alterdiagram]    Script Date: 8/10/2017 7:41:41 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+	CREATE PROCEDURE [dbo].[sp_alterdiagram]
+	(
+		@diagramname 	sysname,
+		@owner_id	int	= null,
+		@version 	int,
+		@definition 	varbinary(max)
+	)
+	WITH EXECUTE AS 'dbo'
+	AS
+	BEGIN
+		set nocount on
+	
+		declare @theId 			int
+		declare @retval 		int
+		declare @IsDbo 			int
+		
+		declare @UIDFound 		int
+		declare @DiagId			int
+		declare @ShouldChangeUID	int
+	
+		if(@diagramname is null)
+		begin
+			RAISERROR ('Invalid ARG', 16, 1)
+			return -1
+		end
+	
+		execute as caller;
+		select @theId = DATABASE_PRINCIPAL_ID();	 
+		select @IsDbo = IS_MEMBER(N'db_owner'); 
+		if(@owner_id is null)
+			select @owner_id = @theId;
+		revert;
+	
+		select @ShouldChangeUID = 0
+		select @DiagId = diagram_id, @UIDFound = principal_id from dbo.sysdiagrams where principal_id = @owner_id and name = @diagramname 
+		
+		if(@DiagId IS NULL or (@IsDbo = 0 and @theId <> @UIDFound))
+		begin
+			RAISERROR ('Diagram does not exist or you do not have permission.', 16, 1);
+			return -3
+		end
+	
+		if(@IsDbo <> 0)
+		begin
+			if(@UIDFound is null or USER_NAME(@UIDFound) is null) -- invalid principal_id
+			begin
+				select @ShouldChangeUID = 1 ;
+			end
+		end
+
+		-- update dds data			
+		update dbo.sysdiagrams set definition = @definition where diagram_id = @DiagId ;
+
+		-- change owner
+		if(@ShouldChangeUID = 1)
+			update dbo.sysdiagrams set principal_id = @theId where diagram_id = @DiagId ;
+
+		-- update dds version
+		if(@version is not null)
+			update dbo.sysdiagrams set version = @version where diagram_id = @DiagId ;
+
+		return 0
+	END
+	
+GO
+/****** Object:  StoredProcedure [dbo].[sp_creatediagram]    Script Date: 8/10/2017 7:41:41 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+	CREATE PROCEDURE [dbo].[sp_creatediagram]
+	(
+		@diagramname 	sysname,
+		@owner_id		int	= null, 	
+		@version 		int,
+		@definition 	varbinary(max)
+	)
+	WITH EXECUTE AS 'dbo'
+	AS
+	BEGIN
+		set nocount on
+	
+		declare @theId int
+		declare @retval int
+		declare @IsDbo	int
+		declare @userName sysname
+		if(@version is null or @diagramname is null)
+		begin
+			RAISERROR (N'E_INVALIDARG', 16, 1);
+			return -1
+		end
+	
+		execute as caller;
+		select @theId = DATABASE_PRINCIPAL_ID(); 
+		select @IsDbo = IS_MEMBER(N'db_owner');
+		revert; 
+		
+		if @owner_id is null
+		begin
+			select @owner_id = @theId;
+		end
+		else
+		begin
+			if @theId <> @owner_id
+			begin
+				if @IsDbo = 0
+				begin
+					RAISERROR (N'E_INVALIDARG', 16, 1);
+					return -1
+				end
+				select @theId = @owner_id
+			end
+		end
+		-- next 2 line only for test, will be removed after define name unique
+		if EXISTS(select diagram_id from dbo.sysdiagrams where principal_id = @theId and name = @diagramname)
+		begin
+			RAISERROR ('The name is already used.', 16, 1);
+			return -2
+		end
+	
+		insert into dbo.sysdiagrams(name, principal_id , version, definition)
+				VALUES(@diagramname, @theId, @version, @definition) ;
+		
+		select @retval = @@IDENTITY 
+		return @retval
+	END
+	
+GO
+/****** Object:  StoredProcedure [dbo].[sp_dropdiagram]    Script Date: 8/10/2017 7:41:41 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+	CREATE PROCEDURE [dbo].[sp_dropdiagram]
+	(
+		@diagramname 	sysname,
+		@owner_id	int	= null
+	)
+	WITH EXECUTE AS 'dbo'
+	AS
+	BEGIN
+		set nocount on
+		declare @theId 			int
+		declare @IsDbo 			int
+		
+		declare @UIDFound 		int
+		declare @DiagId			int
+	
+		if(@diagramname is null)
+		begin
+			RAISERROR ('Invalid value', 16, 1);
+			return -1
+		end
+	
+		EXECUTE AS CALLER;
+		select @theId = DATABASE_PRINCIPAL_ID();
+		select @IsDbo = IS_MEMBER(N'db_owner'); 
+		if(@owner_id is null)
+			select @owner_id = @theId;
+		REVERT; 
+		
+		select @DiagId = diagram_id, @UIDFound = principal_id from dbo.sysdiagrams where principal_id = @owner_id and name = @diagramname 
+		if(@DiagId IS NULL or (@IsDbo = 0 and @UIDFound <> @theId))
+		begin
+			RAISERROR ('Diagram does not exist or you do not have permission.', 16, 1)
+			return -3
+		end
+	
+		delete from dbo.sysdiagrams where diagram_id = @DiagId;
+	
+		return 0;
+	END
+	
+GO
+/****** Object:  StoredProcedure [dbo].[sp_helpdiagramdefinition]    Script Date: 8/10/2017 7:41:41 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+	CREATE PROCEDURE [dbo].[sp_helpdiagramdefinition]
+	(
+		@diagramname 	sysname,
+		@owner_id	int	= null 		
+	)
+	WITH EXECUTE AS N'dbo'
+	AS
+	BEGIN
+		set nocount on
+
+		declare @theId 		int
+		declare @IsDbo 		int
+		declare @DiagId		int
+		declare @UIDFound	int
+	
+		if(@diagramname is null)
+		begin
+			RAISERROR (N'E_INVALIDARG', 16, 1);
+			return -1
+		end
+	
+		execute as caller;
+		select @theId = DATABASE_PRINCIPAL_ID();
+		select @IsDbo = IS_MEMBER(N'db_owner');
+		if(@owner_id is null)
+			select @owner_id = @theId;
+		revert; 
+	
+		select @DiagId = diagram_id, @UIDFound = principal_id from dbo.sysdiagrams where principal_id = @owner_id and name = @diagramname;
+		if(@DiagId IS NULL or (@IsDbo = 0 and @UIDFound <> @theId ))
+		begin
+			RAISERROR ('Diagram does not exist or you do not have permission.', 16, 1);
+			return -3
+		end
+
+		select version, definition FROM dbo.sysdiagrams where diagram_id = @DiagId ; 
+		return 0
+	END
+	
+GO
+/****** Object:  StoredProcedure [dbo].[sp_helpdiagrams]    Script Date: 8/10/2017 7:41:41 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+	CREATE PROCEDURE [dbo].[sp_helpdiagrams]
+	(
+		@diagramname sysname = NULL,
+		@owner_id int = NULL
+	)
+	WITH EXECUTE AS N'dbo'
+	AS
+	BEGIN
+		DECLARE @user sysname
+		DECLARE @dboLogin bit
+		EXECUTE AS CALLER;
+			SET @user = USER_NAME();
+			SET @dboLogin = CONVERT(bit,IS_MEMBER('db_owner'));
+		REVERT;
+		SELECT
+			[Database] = DB_NAME(),
+			[Name] = name,
+			[ID] = diagram_id,
+			[Owner] = USER_NAME(principal_id),
+			[OwnerID] = principal_id
+		FROM
+			sysdiagrams
+		WHERE
+			(@dboLogin = 1 OR USER_NAME(principal_id) = @user) AND
+			(@diagramname IS NULL OR name = @diagramname) AND
+			(@owner_id IS NULL OR principal_id = @owner_id)
+		ORDER BY
+			4, 5, 1
+	END
+	
+GO
+/****** Object:  StoredProcedure [dbo].[sp_renamediagram]    Script Date: 8/10/2017 7:41:41 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+	CREATE PROCEDURE [dbo].[sp_renamediagram]
+	(
+		@diagramname 		sysname,
+		@owner_id		int	= null,
+		@new_diagramname	sysname
+	
+	)
+	WITH EXECUTE AS 'dbo'
+	AS
+	BEGIN
+		set nocount on
+		declare @theId 			int
+		declare @IsDbo 			int
+		
+		declare @UIDFound 		int
+		declare @DiagId			int
+		declare @DiagIdTarg		int
+		declare @u_name			sysname
+		if((@diagramname is null) or (@new_diagramname is null))
+		begin
+			RAISERROR ('Invalid value', 16, 1);
+			return -1
+		end
+	
+		EXECUTE AS CALLER;
+		select @theId = DATABASE_PRINCIPAL_ID();
+		select @IsDbo = IS_MEMBER(N'db_owner'); 
+		if(@owner_id is null)
+			select @owner_id = @theId;
+		REVERT;
+	
+		select @u_name = USER_NAME(@owner_id)
+	
+		select @DiagId = diagram_id, @UIDFound = principal_id from dbo.sysdiagrams where principal_id = @owner_id and name = @diagramname 
+		if(@DiagId IS NULL or (@IsDbo = 0 and @UIDFound <> @theId))
+		begin
+			RAISERROR ('Diagram does not exist or you do not have permission.', 16, 1)
+			return -3
+		end
+	
+		-- if((@u_name is not null) and (@new_diagramname = @diagramname))	-- nothing will change
+		--	return 0;
+	
+		if(@u_name is null)
+			select @DiagIdTarg = diagram_id from dbo.sysdiagrams where principal_id = @theId and name = @new_diagramname
+		else
+			select @DiagIdTarg = diagram_id from dbo.sysdiagrams where principal_id = @owner_id and name = @new_diagramname
+	
+		if((@DiagIdTarg is not null) and  @DiagId <> @DiagIdTarg)
+		begin
+			RAISERROR ('The name is already used.', 16, 1);
+			return -2
+		end		
+	
+		if(@u_name is null)
+			update dbo.sysdiagrams set [name] = @new_diagramname, principal_id = @theId where diagram_id = @DiagId
+		else
+			update dbo.sysdiagrams set [name] = @new_diagramname where diagram_id = @DiagId
+		return 0
+	END
+	
+GO
+/****** Object:  StoredProcedure [dbo].[sp_upgraddiagrams]    Script Date: 8/10/2017 7:41:41 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+	CREATE PROCEDURE [dbo].[sp_upgraddiagrams]
+	AS
+	BEGIN
+		IF OBJECT_ID(N'dbo.sysdiagrams') IS NOT NULL
+			return 0;
+	
+		CREATE TABLE dbo.sysdiagrams
+		(
+			name sysname NOT NULL,
+			principal_id int NOT NULL,	-- we may change it to varbinary(85)
+			diagram_id int PRIMARY KEY IDENTITY,
+			version int,
+	
+			definition varbinary(max)
+			CONSTRAINT UK_principal_name UNIQUE
+			(
+				principal_id,
+				name
+			)
+		);
+
+
+		/* Add this if we need to have some form of extended properties for diagrams */
+		/*
+		IF OBJECT_ID(N'dbo.sysdiagram_properties') IS NULL
+		BEGIN
+			CREATE TABLE dbo.sysdiagram_properties
+			(
+				diagram_id int,
+				name sysname,
+				value varbinary(max) NOT NULL
+			)
+		END
+		*/
+
+		IF OBJECT_ID(N'dbo.dtproperties') IS NOT NULL
+		begin
+			insert into dbo.sysdiagrams
+			(
+				[name],
+				[principal_id],
+				[version],
+				[definition]
+			)
+			select	 
+				convert(sysname, dgnm.[uvalue]),
+				DATABASE_PRINCIPAL_ID(N'dbo'),			-- will change to the sid of sa
+				0,							-- zero for old format, dgdef.[version],
+				dgdef.[lvalue]
+			from dbo.[dtproperties] dgnm
+				inner join dbo.[dtproperties] dggd on dggd.[property] = 'DtgSchemaGUID' and dggd.[objectid] = dgnm.[objectid]	
+				inner join dbo.[dtproperties] dgdef on dgdef.[property] = 'DtgSchemaDATA' and dgdef.[objectid] = dgnm.[objectid]
+				
+			where dgnm.[property] = 'DtgSchemaNAME' and dggd.[uvalue] like N'_EA3E6268-D998-11CE-9454-00AA00A3F36E_' 
+			return 2;
+		end
+		return 1;
+	END
+	
+GO
+EXEC sys.sp_addextendedproperty @name=N'microsoft_database_tools_support', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'sysdiagrams'
+GO
+USE [master]
+GO
+ALTER DATABASE [RunescapeMinigames] SET  READ_WRITE 
+GO
