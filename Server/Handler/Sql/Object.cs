@@ -122,7 +122,7 @@ namespace Sql {
             skills = exstractInt("Divination", skills, 25, reader);
             skills = exstractInt("Invention", skills, 26, reader);
             overall = Int64.Parse(exstractElement("Overall", reader));
-            clanID = Int32.Parse(exstractElement("ClanID", reader));
+            clanID = Int32.Parse(exstractElement("ClanID", reader) == null ? "0" : exstractElement("ClanID", reader));
             skillTime = DateTime.Parse(reader["SkillTime"].ToString());
             return new User(Username, clanID, skills, overall, skillTime);
         }
@@ -206,7 +206,8 @@ namespace Sql {
             points = exstractInt("SummoningPoints", points, 24, reader);
             points = exstractInt("DivinationPoints", points, 25, reader);
             points = exstractInt("InventionPoints", points, 26, reader);
-            overallPoints = Int64.Parse(exstractElement("OverallPoints", reader));
+            overallPoints = Int64.Parse(exstractElement("OverallPoints", reader) 
+                == null ? "0" : exstractElement("OverallPoints", reader));
             teamID = Int32.Parse(exstractElement("TeamID", reader));
             return new EventUser(Username, clanID, skills, points, overallXP, overallPoints, skillTime);
         }
@@ -249,12 +250,16 @@ namespace Sql {
             }
         }
         private static int[] exstractInt(string name, int[] value, int id, SqlDataReader reader) {
-            value[id] = Int32.Parse(exstractElement(name, reader));
+            try {
+                value[id] = Int32.Parse(exstractElement(name, reader));
+            } catch {}
             return value;
         }
         private static string exstractElement(string name, SqlDataReader reader) {
-            if (!reader[name].ToString().Equals(""))
-                return reader[name].ToString();
+            try {
+                if (!reader[name].ToString().Equals(""))
+                    return reader[name].ToString();
+            } catch {}
             return null;
         }
         public static string teamName(int teamID) {
