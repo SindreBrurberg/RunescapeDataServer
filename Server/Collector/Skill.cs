@@ -2,9 +2,9 @@ using System;
 
 namespace Collector {
     class TimedSkill {
-        Skill skill;
-        DateTime start;
-        DateTime end;
+        public Skill skill {get; private set;}
+        public DateTime start {get; private set;}
+        public DateTime end {get; private set;}
         public TimedSkill(Skill skill, DateTime start, DateTime end) {
             this.skill = skill;
             this.start = start;
