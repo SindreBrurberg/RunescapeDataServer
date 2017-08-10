@@ -312,5 +312,30 @@ namespace Sql {
                     Program.clans.Add(new Clan(name));
             }
 		}
+		public static void insertSkill(string name, int eventID, DateTime startTime, DateTime endTime) {
+            Console.WriteLine("Adding new skill: {0} for event: {1} to DB", name, eventID);
+            if (!Program.clanNames.Contains(name)) {
+                Program.clanNames.Add(name);
+                try 
+                { 
+                    using (SqlConnection connection = new SqlConnection(Connection.CS()))
+                    {
+                        connection.Open();
+                        using (SqlCommand command = new SqlCommand(String.insertSkillSQL(), connection))
+                        {
+                                command.Parameters.AddWithValue("@SkillName", name);
+                                command.Parameters.AddWithValue("@EventID", eventID);
+                                command.Parameters.AddWithValue("@StartTime", startTime);
+                                command.Parameters.AddWithValue("@EndTime", endTime);
+                                command.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (SqlException e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            }
+		}
     }
 }

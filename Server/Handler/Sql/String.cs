@@ -80,6 +80,12 @@ namespace Sql {
             sb.Append(", @Invention, @Overall, @SkillTime);");
             return sb.ToString();
         }
+        public static string insertSkillSQL() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("INSERT INTO [dbo].[Skill] ([EventID], [SkillName], [StartTime], [EndTime])");
+            sb.Append("VALUES (@EventID, @SkillName, @StartTime, @EndTime);");
+            return sb.ToString();
+        }
         public static string getUserSQL() {
             StringBuilder sb = new StringBuilder();
             sb.Append("SELECT TOP 1 * ");
@@ -156,11 +162,18 @@ namespace Sql {
             sb.Append("WHERE EndTime > '" + DateTime.Now + "'");
             return sb.ToString();
         }
+        public static string skillsInEventSQL() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT * ");
+            sb.Append("FROM [dbo].[Skill] ");
+            sb.Append("WHERE EventID = @EventID");
+            return sb.ToString();
+        }
         public static string getTeamNameFromIDSQL() {
             StringBuilder sb = new StringBuilder();
             sb.Append("SELECT Name ");
             sb.Append("FROM [dbo].[Team] ");
-            sb.Append("WHERE ID=@ID");
+            sb.Append("WHERE ID = @ID");
             return sb.ToString();
         }
     }

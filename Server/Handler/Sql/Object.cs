@@ -332,8 +332,48 @@ namespace Sql {
             }
             return 0;
         }
-        public static List<Event.Event> eventsNotEnded() {
-            List<Event.Event> events = new List<Event.Event>();
+        // public static List<Event.Event> eventsNotEnded() {
+        //     List<Event.Event> events = new List<Event.Event>();
+        //     try {
+        //         using (SqlConnection connection = new SqlConnection(Connection.CS()))
+        //         {
+        //             connection.Open();
+        //             using (SqlCommand command = new SqlCommand(String.eventsNotEnded(), connection))
+        //             {
+        //                 using (SqlDataReader reader = command.ExecuteReader())
+        //                 {
+        //                     while (reader.Read())
+        //                     {
+        //                         var skills = skillsInEvent(Int32.Parse(reader["ID"].ToString()));
+        //                         if (reader["isTeamed"].Equals(false)) {
+        //                             if (skills.Count == 0) {
+		// 						        events.Add(new Event.Event(reader["Name"].ToString(),
+        //                                     usersFromEventUserTable(Int32.Parse(reader["ID"].ToString())).ToArray()));
+        //                             } else {
+        //                                 events.Add(new Event.Skill(reader["Name"].ToString(), skills,
+        //                                     usersFromEventUserTable(Int32.Parse(reader["ID"].ToString())).ToArray()));
+        //                             }
+        //                         } else {
+        //                             if (skills.Count == 0) {
+        //                                 events.Add(new Event.Event(reader["Name"].ToString(),
+        //                                     teamsFromEventUserTable(Int32.Parse(reader["ID"].ToString())).ToArray()));
+        //                             } else {
+        //                                 events.Add(new Event.Skill(reader["Name"].ToString(), skills,
+        //                                     teamsFromEventUserTable(Int32.Parse(reader["ID"].ToString())).ToArray()));
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     catch (Exception e) {
+        //         Console.WriteLine(e.ToString());
+        //     } 
+        //     return events;
+        // }
+        public static List<Event.Skill> skillEventsNotEnded() {
+            List<Event.Skill> events = new List<Event.Skill>();
             try {
                 using (SqlConnection connection = new SqlConnection(Connection.CS()))
                 {
@@ -344,12 +384,22 @@ namespace Sql {
                         {
                             while (reader.Read())
                             {
+                                int eventID = Int32.Parse(reader["ID"].ToString());
+                                string name = reader["Name"].ToString();
+                                var skills = skillsInEvent(eventID);
+                                DateTime startTime = DateTime.Parse(reader["StartTime"].ToString()); 
+                                DateTime endTime = DateTime.Parse(reader["EndTime"].ToString());
+                                int interval = Int32.Parse(reader["IntervalMinutes"].ToString());
                                 if (reader["isTeamed"].Equals(false)) {
-								    events.Add(new Event.Event(reader["Name"].ToString(),
-                                        usersFromEventUserTable(Int32.Parse(reader["ID"].ToString())).ToArray()));
+                                    if (skills.Count != 0) {
+                                        events.Add(new Event.Skill(name, eventID, skills,
+                                            usersFromEventUserTable(eventID).ToArray(), startTime, endTime, interval));
+                                    }
                                 } else {
-                                    events.Add(new Event.Event(reader["Name"].ToString(),
-                                        teamsFromEventUserTable(Int32.Parse(reader["ID"].ToString())).ToArray()));
+                                    if (skills.Count != 0) {
+                                        // events.Add(new Event.Skill(name, eventID, skills, 
+                                        //     teamsFromEventUserTable(eventID).ToArray(), startTime, endTime, interval));
+                                    }
                                 }
                             }
                         }
@@ -360,6 +410,32 @@ namespace Sql {
                 Console.WriteLine(e.ToString());
             } 
             return events;
+        }
+        public static List<TimedSkill> skillsInEvent(int eventID) {
+            List<TimedSkill> skills = new List<TimedSkill>();
+            try {
+                using (SqlConnection connection = new SqlConnection(Connection.CS()))
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(String.skillsInEventSQL(), connection))
+                    {
+                        command.Parameters.AddWithValue("@EventID", eventID);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                skills.Add(new TimedSkill((Collector.Skill) Enum.Parse(typeof(Collector.Skill), 
+                                    reader["SkillName"].ToString()), DateTime.Parse(reader["StartTime"].ToString()), 
+                                    DateTime.Parse(reader["EndTime"].ToString())));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            } 
+            return skills;
         }
     }
 }
