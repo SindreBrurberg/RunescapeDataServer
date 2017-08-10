@@ -16,15 +16,17 @@ namespace Server
     class Program
     {
         //public static List<string> clans;
-        public static List<Clan> clans;
-        public static List<string> clanNames = new List<string>();
+        public static List<Clan> clans {get; private set;}
+        public static List<string> clanNames {get; private set;} = new List<string>();
         static void Main(string[] args)
         {
             config();
-            Event.EventHandler.initEvent(EventTypes.Skills, DateTime.Now.ToString(),
-                Sql.Object.usersFromUserTable(clans[0].name).ToArray(), DateTime.Now, DateTime.Now);
-            foreach(Event.Event evt in Sql.Object.eventsNotEnded()) {
-                Console.WriteLine(evt.name);
+            var skill = new List<TimedSkill>();
+            skill.Add(new TimedSkill(Collector.Skill.Overall, DateTime.Now, DateTime.Now.AddHours(2)));
+            Event.EventHandler.initEvent(EventTypes.Skills, DateTime.Now.ToString(), skill,
+                Sql.Object.usersFromUserTable(clans[0].name).ToArray(), DateTime.Now, DateTime.Now.AddHours(2));
+            foreach(var evt in Sql.Object.skillEventsNotEnded()) {
+                
             }
             Console.ReadLine();
             uppdateLoop(null);
