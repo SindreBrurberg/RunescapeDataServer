@@ -252,14 +252,20 @@ namespace Sql {
         private static int[] exstractInt(string name, int[] value, int id, SqlDataReader reader) {
             try {
                 value[id] = Int32.Parse(exstractElement(name, reader));
-            } catch {}
+            } catch (Exception e) {
+                if (!e.ToString().Contains("Value cannot be null"))
+                    Console.WriteLine(e);
+            }
             return value;
         }
         private static string exstractElement(string name, SqlDataReader reader) {
             try {
                 if (!reader[name].ToString().Equals(""))
                     return reader[name].ToString();
-            } catch {}
+            } catch (Exception e) {
+                if (!e.ToString().Contains("System.IndexOutOfRangeException: ClanID"))
+                    Console.WriteLine(e);
+            }
             return null;
         }
         public static string teamName(int teamID) {
