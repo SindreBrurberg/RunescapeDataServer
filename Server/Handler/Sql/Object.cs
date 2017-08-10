@@ -333,34 +333,62 @@ namespace Sql {
                             skills[25] = Int32.Parse(reader["DivinationXP"].ToString());
                             skills[26] = Int32.Parse(reader["InventionXP"].ToString());
                             overallXP = Int64.Parse(reader["OverallXP"].ToString());
-                            points[0] = Int32.Parse(reader["AttackPoints"].ToString());
-                            points[1] = Int32.Parse(reader["StrengthPoints"].ToString());
-                            points[2] = Int32.Parse(reader["DefencePoints"].ToString());
-                            points[3] = Int32.Parse(reader["RangedPoints"].ToString());
-                            points[4] = Int32.Parse(reader["PrayerPoints"].ToString());
-                            points[5] = Int32.Parse(reader["MagicPoints"].ToString());
-                            points[6] = Int32.Parse(reader["ConstitutionPoints"].ToString());
-                            points[7] = Int32.Parse(reader["CraftingPoints"].ToString());
-                            points[8] = Int32.Parse(reader["MiningPoints"].ToString());
-                            points[9] = Int32.Parse(reader["SmithingPoints"].ToString());
-                            points[10] = Int32.Parse(reader["FishingPoints"].ToString());
-                            points[11] = Int32.Parse(reader["CookingPoints"].ToString());
-                            points[12] = Int32.Parse(reader["FiremakingPoints"].ToString());
-                            points[13] = Int32.Parse(reader["WoodcuttingPoints"].ToString());
-                            points[14] = Int32.Parse(reader["RunecraftingPoints"].ToString());
-                            points[15] = Int32.Parse(reader["DungeoneeringPoints"].ToString());
-                            points[16] = Int32.Parse(reader["AgilityPoints"].ToString());
-                            points[17] = Int32.Parse(reader["HerblorePoints"].ToString());
-                            points[18] = Int32.Parse(reader["ThievingPoints"].ToString());
-                            points[19] = Int32.Parse(reader["FletchingPoints"].ToString());
-                            points[20] = Int32.Parse(reader["SlayerPoints"].ToString());
-                            points[21] = Int32.Parse(reader["FarmingPoints"].ToString());
-                            points[22] = Int32.Parse(reader["ConstructionPoints"].ToString());
-                            points[23] = Int32.Parse(reader["HunterPoints"].ToString());
-                            points[24] = Int32.Parse(reader["SummoningPoints"].ToString());
-                            points[25] = Int32.Parse(reader["DivinationPoints"].ToString());
-                            points[26] = Int32.Parse(reader["InventionPoints"].ToString());
-                            overallPoints = Int64.Parse(reader["OverallPoints"].ToString());
+                            if (!reader["AttackPoints"].ToString().Equals(""))
+                                points[0] = Int32.Parse(reader["AttackPoints"].ToString());
+                            if (!reader["StrengthPoints"].ToString().Equals(""))
+                                points[1] = Int32.Parse(reader["StrengthPoints"].ToString());
+                            if (!reader["DefencePoints"].ToString().Equals(""))
+                                points[2] = Int32.Parse(reader["DefencePoints"].ToString());
+                            if (!reader["RangedPoints"].ToString().Equals(""))
+                                points[3] = Int32.Parse(reader["RangedPoints"].ToString());
+                            if (!reader["PrayerPoints"].ToString().Equals(""))
+                                points[4] = Int32.Parse(reader["PrayerPoints"].ToString());
+                            if (!reader["MagicPoints"].ToString().Equals(""))
+                                points[5] = Int32.Parse(reader["MagicPoints"].ToString());
+                            if (!reader["ConstitutionPoints"].ToString().Equals(""))
+                                points[6] = Int32.Parse(reader["ConstitutionPoints"].ToString());
+                            if (!reader["CraftingPoints"].ToString().Equals(""))
+                                points[7] = Int32.Parse(reader["CraftingPoints"].ToString());
+                            if (!reader["MiningPoints"].ToString().Equals(""))
+                                points[8] = Int32.Parse(reader["MiningPoints"].ToString());
+                            if (!reader["SmithingPoints"].ToString().Equals(""))
+                                points[9] = Int32.Parse(reader["SmithingPoints"].ToString());
+                            if (!reader["FishingPoints"].ToString().Equals(""))
+                                points[10] = Int32.Parse(reader["FishingPoints"].ToString());
+                            if (!reader["CookingPoints"].ToString().Equals(""))
+                                points[11] = Int32.Parse(reader["CookingPoints"].ToString());
+                            if (!reader["FiremakingPoints"].ToString().Equals(""))
+                                points[12] = Int32.Parse(reader["FiremakingPoints"].ToString());
+                            if (!reader["WoodcuttingPoints"].ToString().Equals(""))
+                                points[13] = Int32.Parse(reader["WoodcuttingPoints"].ToString());
+                            if (!reader["RunecraftingPoints"].ToString().Equals(""))
+                                points[14] = Int32.Parse(reader["RunecraftingPoints"].ToString());
+                            if (!reader["DungeoneeringPoints"].ToString().Equals(""))
+                                points[15] = Int32.Parse(reader["DungeoneeringPoints"].ToString());
+                            if (!reader["AgilityPoints"].ToString().Equals(""))
+                                points[16] = Int32.Parse(reader["AgilityPoints"].ToString());
+                            if (!reader["HerblorePoints"].ToString().Equals(""))
+                                points[17] = Int32.Parse(reader["HerblorePoints"].ToString());
+                            if (!reader["ThievingPoints"].ToString().Equals(""))
+                                points[18] = Int32.Parse(reader["ThievingPoints"].ToString());
+                            if (!reader["FletchingPoints"].ToString().Equals(""))
+                                points[19] = Int32.Parse(reader["FletchingPoints"].ToString());
+                            if (!reader["SlayerPoints"].ToString().Equals(""))
+                                points[20] = Int32.Parse(reader["SlayerPoints"].ToString());
+                            if (!reader["FarmingPoints"].ToString().Equals(""))
+                                points[21] = Int32.Parse(reader["FarmingPoints"].ToString());
+                            if (!reader["ConstructionPoints"].ToString().Equals(""))
+                                points[22] = Int32.Parse(reader["ConstructionPoints"].ToString());
+                            if (!reader["HunterPoints"].ToString().Equals(""))
+                                points[23] = Int32.Parse(reader["HunterPoints"].ToString());
+                            if (!reader["SummoningPoints"].ToString().Equals(""))
+                                points[24] = Int32.Parse(reader["SummoningPoints"].ToString());
+                            if (!reader["DivinationPoints"].ToString().Equals(""))
+                                points[25] = Int32.Parse(reader["DivinationPoints"].ToString());
+                            if (!reader["InventionPoints"].ToString().Equals(""))
+                                points[26] = Int32.Parse(reader["InventionPoints"].ToString());
+                            if (!reader["OverallPoints"].ToString().Equals(""))
+                                overallPoints = Int64.Parse(reader["OverallPoints"].ToString());
                             teamID = Int32.Parse(reader["TeamID"].ToString());
                             skillTime = DateTime.Parse(reader["SkillTime"].ToString());
                             users.Add(new EventUser(Username, skills, points, overallXP, overallPoints, skillTime, teamID));
@@ -433,6 +461,36 @@ namespace Sql {
                 Console.WriteLine(e.ToString());
             }
             return 0;
+        }
+        public static List<Event.Event> eventsNotEnded() {
+            List<Event.Event> events = new List<Event.Event>();
+            try {
+                using (SqlConnection connection = new SqlConnection(Connection.CS()))
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(String.eventsNotEnded(), connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                if (reader["isTeamed"].Equals(false)) {
+                                    Console.WriteLine(Int32.Parse(reader["ID"].ToString()));
+                                    string name = reader["Name"].ToString();
+								    events.Add(new Event.Event(name,
+                                        usersFromEventUserTable(14).ToArray()));
+                                } else {
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            } 
+            return events;
         }
     }
 }
